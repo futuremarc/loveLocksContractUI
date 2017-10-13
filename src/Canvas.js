@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import React, { Component } from 'react';
 import Portal from 'react-minimalist-portal';
+import _ from 'lodash';
 
 let cols = 100;
 let rows = 100;
@@ -31,13 +32,54 @@ for (let i = 0; i < cells; ++i) {
     }
 }
 
-function drawGrid() {
+
+class Canvas extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      data:null
+    };
+    this.onCanvasMouseDown = this.onCanvasMouseDown.bind(this);
+    this.onCanvasMouseUp = this.onCanvasMouseUp.bind(this);
+    this.onCanvasMouseMove = this.onCanvasMouseMove.bind(this);
+    this.onCanvasMouseOut = this.onCanvasMouseOut.bind(this);
+    this.drawGrid = this.drawGrid.bind(this);
+    this.handle = this.handle.bind(this);
+    this.wheel = this.wheel.bind(this);
+  }
+
+  wheel(event) {
+    let delta = 0;
+    if (!event) event = window.event;
+    if (event.wheelDelta) {
+        delta = event.wheelDelta / 120;
+    } else if (event.detail) {
+        delta = -event.detail / 3;
+    }
+    if (delta) {
+        this.handle(delta);
+    }
+    event.preventDefault();
+    event.returnValue = false;
+  }
+
+
+  handle(delta) {
+    gScale += delta * 0.01;
+    if (gScale < 1) gScale = 1;
+    this.drawGrid();
+  }
+
+
+  drawGrid() {
+    const {xPoses, yPoses} = this.props;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
 
     ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
-
 
     // for (let i = 0; i < cols; ++i) {
     //
@@ -80,45 +122,19 @@ function drawGrid() {
       y = y + size;
       counter += 1;
 
-  }
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-
-}
-
-
-function handle(delta) {
-    gScale += delta * 0.01;
-    if (gScale < 1) gScale = 1;
-    drawGrid();
-}
-
-function wheel(event) {
-    let delta = 0;
-    if (!event) event = window.event;
-    if (event.wheelDelta) {
-        delta = event.wheelDelta / 120;
-    } else if (event.detail) {
-        delta = -event.detail / 3;
     }
-    if (delta) {
-        handle(delta);
-    }
-    event.preventDefault();
-    event.returnValue = false;
-}
+    ctx.fill();
+    ctx.stroke();
 
 
-class Canvas extends Component {
+    _.each(xPoses, (value, index) => {
+      ctx.beginPath();
+      ctx.arc(xPoses[index] * size,yPoses[index] * size,10,0,2*Math.PI);
+      console.log(xPoses[index],yPoses[index])
+      ctx.stroke();
+    })
 
-  constructor(props) {
-    super(props)
-    this.state = {};
-    this.onCanvasMouseDown = this.onCanvasMouseDown.bind(this);
-    this.onCanvasMouseUp = this.onCanvasMouseUp.bind(this);
-    this.onCanvasMouseMove = this.onCanvasMouseMove.bind(this);
-    this.onCanvasMouseOut = this.onCanvasMouseOut.bind(this);
+    ctx.restore();
 
   }
 
@@ -157,7 +173,7 @@ class Canvas extends Component {
       if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
       if (gY > 0) gY = 0;
       if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
-      drawGrid();
+      this.drawGrid();
     }
   }
 
@@ -170,8 +186,10 @@ class Canvas extends Component {
 
   }
 
-  componentDidMount(){
+  componentWillReceiveProps(){
+  }
 
+  componentDidMount(){
 
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext("2d");
@@ -179,15 +197,12 @@ class Canvas extends Component {
     ctx.lineWidth = 1;
     ctx.font = "14px sans-serif";
 
-    drawGrid(0, 0);
+    this.drawGrid(0, 0);
 
-    window.addEventListener('DOMMouseScroll', wheel, false);
-    window.onmousewheel = document.onmousewheel = wheel;
-
-
-
-
+    window.addEventListener('DOMMouseScroll', this.wheel, false);
+    window.onmousewheel = document.onmousewheel = this.wheel;
   }
+
   render(){
 
     return(

@@ -39,8 +39,6 @@ let web3 = window.web3 || undefined;
           isFormActive: true,
           xPos:xPos,
           yPos:yPos
-        },()=>{
-          console.log('state',this.state);
         });
       }
 
@@ -50,9 +48,11 @@ let web3 = window.web3 || undefined;
 
 
     initContract (contract) {
+
       MiniToken = contract(abi);
       miniToken = MiniToken.at(address);
       console.log(miniToken);
+
       miniToken.getLoveLocks().then((data)=>{
 
         console.log('contract data',data);
@@ -61,7 +61,8 @@ let web3 = window.web3 || undefined;
           personsB: String(data[1]).split(','),
           messages: String(data[2]).split(','),
           xPoses: String(data[3]).split(','),
-          yPoses: String(data[4]).split(',')
+          yPoses: String(data[4]).split(','),
+          isCanvasReady: true
         })
       });
 
@@ -70,14 +71,11 @@ let web3 = window.web3 || undefined;
     componentWillMount() {
 
       if (typeof web3 !== 'undefined') {
-         // Use Mist/MetaMask's provider
         window.web3 = new Web3(web3.currentProvider);
-         console.log('found web3 already!')
-       } else {
-         console.log('No web3? You should consider trying MetaMask!')
-         // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+        console.log('found web3 already!')
+       }else {
+        console.log('No web3? You should consider trying MetaMask!')
         web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-
        }
 
       console.log(web3.eth.defaultAccount);
@@ -87,21 +85,24 @@ let web3 = window.web3 || undefined;
 
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+
+    }
 
     render() {
 
       let TableRows = []
+      const {personsA,personsB,messages,xPoses,yPoses,xPos,yPos} = this.state;
 
-      _.each(this.state.personsA, (value, index) => {
+      _.each(personsA, (value, index) => {
 
         TableRows.push(
           <tr key={index}>
-            <td>{web3.toAscii(this.state.personsA[index])}</td>
-            <td>{web3.toAscii(this.state.personsB[index])}</td>
-            <td>{web3.toAscii(this.state.messages[index])}</td>
-            <td>{this.state.xPoses[index]}</td>
-            <td>{this.state.yPoses[index]}</td>
+            <td>{web3.toAscii(personsA[index])}</td>
+            <td>{web3.toAscii(personsB[index])}</td>
+            <td>{web3.toAscii(messages[index])}</td>
+            <td>{xPoses[index]}</td>
+            <td>{yPoses[index]}</td>
           </tr>
         )
       })
@@ -126,8 +127,8 @@ let web3 = window.web3 || undefined;
                 {TableRows}
               </tbody>
             </table>
-            <Canvas openForm={this.openForm} />
-            { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={this.state.xPos} yPos={this.state.yPos} closeForm={this.closeForm} /> : null }
+            { this.state.isCanvasReady ? <Canvas personsA={personsA} personsB={personsB} messages={messages} xPoses={xPoses} yPoses= {yPoses} openForm={this.openForm} /> : null }
+            { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           </div>
         </div>
       );
