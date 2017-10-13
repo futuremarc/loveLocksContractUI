@@ -65,13 +65,16 @@ function drawGrid() {
     ctx.scale(gScale, gScale);
 
 
-    //for (var i = 0; i < cols; ++i) {
-    //    for (var j = 0; j < rows; ++j) {
-    //        ctx.fillStyle = grid[i * rows + j];
-    //        ctx.fillRect(i * size, j * size, size, size);
-    //        ctx.strokeRect(i * size, j * size, size, size);
-    //    }
-    //}
+    for (var i = 0; i < cols; ++i) {
+
+         for (var j = 0; j < rows; ++j) {
+             ctx.fillStyle = grid[i * rows + j];
+             ctx.fillRect(i * size, j * size, size, size);
+             ctx.strokeRect(i * size, j * size, size, size);
+             //ctx.fillText("box " + j + ", " + i, size, size);
+         }
+     }
+
 
 	    ctx.globalAlpha = 1;
 	    ctx.strokeStyle = "#1e1e1e";
@@ -98,8 +101,6 @@ function drawGrid() {
 
           x += size;
           z += 1;
-
-
 				}
 
 			x = 0;
@@ -107,9 +108,8 @@ function drawGrid() {
 			counter += 1;
 
 	}
-        ctx.fill();
-      ctx.stroke();
-
+  ctx.fill();
+  ctx.stroke();
   ctx.restore();
 
 }
