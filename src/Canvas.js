@@ -138,10 +138,13 @@ class Canvas extends Component {
     isDown = false;
     clearTimeout(dragTimeout);
     if (!isDragging){
-      console.log('new lock',Math.round((e.nativeEvent.offsetX/size + (Math.abs(gX)/size)) / gScale),Math.round((e.nativeEvent.offsetY/size + (Math.abs(gY)/size)) / gScale))
+      const xPos = Math.round((e.nativeEvent.offsetX/size + (Math.abs(gX)/size)) / gScale);
+      const yPos = Math.round((e.nativeEvent.offsetY/size + (Math.abs(gY)/size)) / gScale);
+      console.log('new lock',xPos,yPos);
+      openForm(xPos,yPos);
     }
     isDragging = false;
-    openForm();
+
   }
 
   onCanvasMouseMove(e){

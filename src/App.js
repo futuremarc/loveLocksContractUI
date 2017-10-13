@@ -34,8 +34,14 @@ let web3 = window.web3 || undefined;
     }
 
 
-      openForm(){
-        this.setState({isFormActive: true});
+      openForm(xPos,yPos){
+        this.setState({
+          isFormActive: true,
+          xPos:xPos,
+          yPos:yPos
+        },()=>{
+          console.log('state',this.state);
+        });
       }
 
       closeForm(e){
@@ -44,12 +50,10 @@ let web3 = window.web3 || undefined;
 
 
     initContract (contract) {
-      MiniToken = contract(abi)
-      miniToken = MiniToken.at(address)
-
-      console.log(miniToken)
-
-      let data = miniToken.getLoveLocks().then((data)=>{
+      MiniToken = contract(abi);
+      miniToken = MiniToken.at(address);
+      console.log(miniToken);
+      miniToken.getLoveLocks().then((data)=>{
 
         console.log('contract data',data);
         this.setState({
@@ -76,53 +80,15 @@ let web3 = window.web3 || undefined;
 
        }
 
-
-    console.log(web3.eth.defaultAccount);
-
-    //let loveLocksContract = web3.eth.contract(loveLocksContractABI).at(loveLocksContractAddress);
-
+      console.log(web3.eth.defaultAccount);
       const eth = new Eth(web3.currentProvider)
       const contract = new EthContract(eth);
       this.initContract(contract);
 
-
     }
 
-    componentDidMount() {
+    componentDidMount() {}
 
-      console.log()
-      $('form').submit((e)=>{
-        e.preventDefault();
-
-        let personA = web3.fromUtf8($('#personA').val());
-        let personB = web3.fromUtf8($('#personB').val());
-        let message = web3.fromUtf8($('#message').val());
-        let xPos = $('#xPos').val();
-        let yPos = $('#yPos').val();
-
-        console.log('submit',personA,personB,message,xPos,yPos);
-
-        if (!personA || !personB || !message || !xPos || !yPos) return;
-
-        miniToken.addLoveLock(personA,personB,message,xPos,yPos,{ from: web3.eth.defaultAccount , gas: '4000000'}).then((data,err)=>{
-          console.log(data,err);
-
-          miniToken.getLoveLocks().then((data)=>{
-
-            console.log('contract data',data);
-            this.setState({
-              personsA: String(data[0]).split(','),
-              personsB: String(data[1]).split(','),
-              messages: String(data[2]).split(','),
-              xPoses: String(data[3]).split(','),
-              yPoses: String(data[4]).split(',')
-            })
-          });
-
-        })
-
-      })
-    }
     render() {
 
       let TableRows = []
@@ -161,7 +127,7 @@ let web3 = window.web3 || undefined;
               </tbody>
             </table>
             <Canvas openForm={this.openForm} />
-            { this.state.isFormActive ? <Form closeForm={this.closeForm} /> : null }
+            { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={this.state.xPos} yPos={this.state.yPos} closeForm={this.closeForm} /> : null }
           </div>
         </div>
       );

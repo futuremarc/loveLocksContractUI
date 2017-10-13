@@ -14,7 +14,7 @@
   font-size: large;
 }
 
-input, textarea, canvas,a{
+input, textarea, canvas,a,#xPos,#yPos{
   text-align: left;
   display:block;
 }
