@@ -1,48 +1,51 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Web3 from 'web3';
 import _ from 'lodash';
 
 let ETHEREUM_CLIENT = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"))
 
-const relationsContractABI = [{"constant":true,"inputs":[],"name":"getRelations","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_firstNameA","type":"bytes32"},{"name":"_lastNameA","type":"bytes32"},{"name":"_firstNameB","type":"bytes32"},{"name":"_lastNameB","type":"bytes32"}],"name":"addRelation","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"relations","outputs":[{"name":"firstNameA","type":"bytes32"},{"name":"lastNameA","type":"bytes32"},{"name":"firstNameB","type":"bytes32"},{"name":"lastNameB","type":"bytes32"}],"payable":false,"type":"function"}];
+const loveLocksContractABI = [{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"}],"payable":false,"type":"function"}];
 
-const relationsContractAddress = '0x7637f8ac9cf035a5e537187a82fb10516d7c25f0';
-let relationsContract = ETHEREUM_CLIENT.eth.contract(relationsContractABI).at(relationsContractAddress);
+const loveLocksContractAddress = '0xbf36d4a594cd2917f991ce23c1a42c73da31eb22';
+let loveLocksContract = ETHEREUM_CLIENT.eth.contract(loveLocksContractABI).at(loveLocksContractAddress);
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      firstNamesA: [],
-      lastNamesA: [],
-      firstNamesB: [],
-      lastNamesB: [],
+      personsA: [],
+      personsB: [],
+      messages: [],
+      xPoses: [],
+      yPoses: []
     }
   }
 
   componentWillMount() {
-    let data = relationsContract.getRelations();
+    let data = loveLocksContract.getLoveLocks();
     console.log(data);
     this.setState({
-      firstNamesA: String(data[0]).split(','),
-      lastNamesA: String(data[1]).split(','),
-      firstNamesB: String(data[2]).split(','),
-      lastNamesB: String(data[3]).split(',')
+      personsA: String(data[0]).split(','),
+      personsB: String(data[1]).split(','),
+      messages: String(data[2]).split(','),
+      xPoses: String(data[3]).split(','),
+      yPoses: String(data[4]).split(',')
     })
   }
   render() {
 
     let TableRows = []
 
-    _.each(this.state.firstNamesA, (value, index) => {
+    _.each(this.state.personsA, (value, index) => {
+
       TableRows.push(
-        <tr key={value}>
-          <td>{ETHEREUM_CLIENT.toAscii(this.state.firstNamesA[index])}</td>
-          <td>{ETHEREUM_CLIENT.toAscii(this.state.lastNamesA[index])}</td>
-          <td>{ETHEREUM_CLIENT.toAscii(this.state.firstNamesB[index])}</td>
-          <td>{ETHEREUM_CLIENT.toAscii(this.state.lastNamesB[index])}</td>
+        <tr key={index}>
+          <td>{ETHEREUM_CLIENT.toAscii(this.state.personsA[index])}</td>
+          <td>{ETHEREUM_CLIENT.toAscii(this.state.personsB[index])}</td>
+          <td>{ETHEREUM_CLIENT.toAscii(this.state.messages[index])}</td>
+          <td>{this.state.xPoses[index]}</td>
+          <td>{this.state.yPoses[index]}</td>
         </tr>
       )
     })
@@ -56,10 +59,11 @@ class App extends Component {
           <table>
             <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Person A</th>
+                <th>Person B</th>
+                <th>Message</th>
+                <th>xPos</th>
+                <th>yPos</th>
               </tr>
             </thead>
             <tbody>
