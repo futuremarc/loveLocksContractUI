@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import './App.css';
 import Web3 from 'web3';
 import _ from 'lodash';
-import './fence.js';
+import $ from 'jquery';
+import Form from './Form.js'
+import Canvas from './Canvas.js'
 
 const Eth = require('ethjs-query')
 const EthContract = require('ethjs-contract')
 
 const abi = [{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"}],"payable":false,"type":"function"}];
-const address = '0xbf36d4a594cd2917f991ce23c1a42c73da31eb22';
-
+const address = '0x6f26f3ce48fa25c83bbc8a0fc8315837adfdcfef';
+let MiniToken, miniToken;
 
 let web3 = window.web3 || undefined;
 
@@ -21,34 +23,47 @@ let web3 = window.web3 || undefined;
         personsB: [],
         messages: [],
         xPoses: [],
-        yPoses: []
+        yPoses: [],
+        isFormActive: null
       }
 
       this.initContract = this.initContract.bind(this);
+      this.openForm = this.openForm.bind(this);
+      this.closeForm = this.closeForm.bind(this);
+
     }
 
+
+      openForm(){
+        this.setState({isFormActive: true});
+      }
+
+      closeForm(e){
+        this.setState({isFormActive: null});
+      }
+
+
     initContract (contract) {
-      const MiniToken = contract(abi)
-      const miniToken = MiniToken.at(address)
-      //listenForClicks(miniToken)
+      MiniToken = contract(abi)
+      miniToken = MiniToken.at(address)
 
       console.log(miniToken)
-            let data = miniToken.getLoveLocks().then((data)=>{
-              console.log('contract data',data);
-              this.setState({
-                personsA: String(data[0]).split(','),
-                personsB: String(data[1]).split(','),
-                messages: String(data[2]).split(','),
-                xPoses: String(data[3]).split(','),
-                yPoses: String(data[4]).split(',')
-              })
-            });
+
+      let data = miniToken.getLoveLocks().then((data)=>{
+
+        console.log('contract data',data);
+        this.setState({
+          personsA: String(data[0]).split(','),
+          personsB: String(data[1]).split(','),
+          messages: String(data[2]).split(','),
+          xPoses: String(data[3]).split(','),
+          yPoses: String(data[4]).split(',')
+        })
+      });
 
     }
 
     componentWillMount() {
-
-      console.log(web3)
 
       if (typeof web3 !== 'undefined') {
          // Use Mist/MetaMask's provider
@@ -62,6 +77,8 @@ let web3 = window.web3 || undefined;
        }
 
 
+    console.log(web3.eth.defaultAccount);
+
     //let loveLocksContract = web3.eth.contract(loveLocksContractABI).at(loveLocksContractAddress);
 
       const eth = new Eth(web3.currentProvider)
@@ -73,13 +90,38 @@ let web3 = window.web3 || undefined;
 
     componentDidMount() {
 
-      // web3.eth.getAccounts(function(err, accounts) {
-      //   console.log(accounts)
-      // })
+      console.log()
+      $('form').submit((e)=>{
+        e.preventDefault();
 
-      console.log(web3.eth.defaultAccount)
+        let personA = web3.fromUtf8($('#personA').val());
+        let personB = web3.fromUtf8($('#personB').val());
+        let message = web3.fromUtf8($('#message').val());
+        let xPos = $('#xPos').val();
+        let yPos = $('#yPos').val();
 
-      //loveLocksContract.addLoveLock('joe','craig','lovely times',253,1266);
+        console.log('submit',personA,personB,message,xPos,yPos);
+
+        if (!personA || !personB || !message || !xPos || !yPos) return;
+
+        miniToken.addLoveLock(personA,personB,message,xPos,yPos,{ from: web3.eth.defaultAccount , gas: '4000000'}).then((data,err)=>{
+          console.log(data,err);
+
+          miniToken.getLoveLocks().then((data)=>{
+
+            console.log('contract data',data);
+            this.setState({
+              personsA: String(data[0]).split(','),
+              personsB: String(data[1]).split(','),
+              messages: String(data[2]).split(','),
+              xPoses: String(data[3]).split(','),
+              yPoses: String(data[4]).split(',')
+            })
+          });
+
+        })
+
+      })
     }
     render() {
 
@@ -118,6 +160,8 @@ let web3 = window.web3 || undefined;
                 {TableRows}
               </tbody>
             </table>
+            <Canvas openForm={this.openForm} />
+            { this.state.isFormActive ? <Form closeForm={this.closeForm} /> : null }
           </div>
         </div>
       );
