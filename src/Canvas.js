@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-let cols = 300;
-let rows = 100;
+let cols = 1000;
+let rows = 200;
 let cells = rows * cols;
 let size = 50;
 let gW = cols * size;
@@ -27,30 +27,6 @@ class Canvas extends Component {
     super(props);
 
     let data = {...props};
-    // data.colors.map((item,index)=>{
-    //   let str = web3.toAscii(item);
-    //   data.colors[index] = str.substring(0,7);
-    // })
-    // data.personsA.map((item,index)=>{
-    //   data.personsA[index] = web3.toAscii(item);
-    // })
-    // data.personsB.map((item,index)=>{
-    //   data.personsB[index] = web3.toAscii(item);
-    // })
-    // data.msgs1.map((item,index)=>{
-    //   data.msgs1[index] = web3.toAscii(item);
-    // })
-    // data.msgs2.map((item,index)=>{
-    //   data.msgs2[index] = web3.toAscii(item);
-    // })
-    // data.msgs3.map((item,index)=>{
-    //   data.msgs3[index] = web3.toAscii(item);
-    // })
-    // data.msgs4.map((item,index)=>{
-    //   data.msgs4[index] = web3.toAscii(item);
-    // })
-
-
     this.state = {
       locks:data
     };
@@ -84,7 +60,6 @@ class Canvas extends Component {
 
         let data = {...nextProps};
 
-
         this.state = {
           locks:data
         };
@@ -114,12 +89,11 @@ class Canvas extends Component {
       ctx.lineJoin = "round";
       ctx.lineWidth = cornerRadius;
 
-
       _.map(this.state.locks.colors, (value, index) => {
         let x = this.state.locks.xPoses[index] * size;
         let y = this.state.locks.yPoses[index] * size;
 
-        ctx.strokeStyle = '#222';
+        ctx.strokeStyle = '#ddd';
 
         ctx.beginPath();
         ctx.arc(x,y , circSize, Math.PI,0, false);
@@ -129,9 +103,8 @@ class Canvas extends Component {
 
       })
 
-
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#555";
+      ctx.strokeStyle = "#666";
       ctx.lineWidth = 4;
       ctx.beginPath();
       let x = 0;
@@ -230,8 +203,7 @@ class Canvas extends Component {
   }
 
   componentWillMount(){
-    console.log('componentWillMount', this.props, this.state)
-
+    console.log('componentWillMount', this.props, this.state);
   }
 
   componentDidMount(){

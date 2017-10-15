@@ -1,13 +1,24 @@
 html,body{
-  background-image: url(http://www.clker.com/cliparts/8/8/c/5/11949863832019937540moon-half.svg), linear-gradient(to bottom, #434265, #E76867, #FCBB9D);
+  /*background-image: url(http://www.clker.com/cliparts/8/8/c/5/11949863832019937540moon-half.svg), linear-gradient(to bottom, #434265, #E76867, #FCBB9D);
   background-repeat: no-repeat;
   background-size: 100px 100px, auto;
-  background-blend-mode: exclusion;
+  background-blend-mode: exclusion;*/
   border:none;
 }
 
-canvas{
+#canvas{
   border:none;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:5;
+}
+#grass-canvas{
+  border:none;
+  top:0;
+  left:0;
+  position:fixed;
+  z-index:-4;
 }
 .App {
   text-align: center;
@@ -15,7 +26,7 @@ canvas{
 }
 
 .App-table{
-  display: block;
+  display: none;
 }
 
 .App-intro {
@@ -41,35 +52,43 @@ h1 {
   text-shadow: 0 10px 30px hsla(0, 0%, 0%, 1);
 }
 form {
-  width: 350px;
+  width: 420px;
   padding: 25px;
-  background-color: #efff00;
+  background-color: #bf5240;
   position: absolute;
-  top: 50%; right: 40%;
+  top: 40%; right: 40%;
   margin: 0 0;
   transition: top 1s;
   border-radius: 7%;
 }
 
-.animate-lock {
+.lock-coords{
+  color:#000;
+}
+
+.animate-lock{
   transform: rotateY(180deg);
+
   top: -250px;
   transition: transform 1s 1s, top 1s;
 }
 
 .lockbar {
-  height: 350px; width: 250px;
+  height: 350px; width: 320px;
   position: absolute;
-  top: -180px;
-  left: 50%;
+  top: -230px;
+  left: 41.5%;
+  transform: rotateY(0deg);
+
   margin-left: -125px;
-  border: 30px #000 solid;
+  border: 52px #ddd solid;
   border-bottom: none;
   border-radius: 125px;
   border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   z-index: -1;
   transition: transform 1s, top 1s 1s;
-  transform-origin: 0% 50%;
+  transform-origin: 10% 50%;
 }
 .cutoff {
   height: 50%; width: 250px;
@@ -82,10 +101,10 @@ form {
 
 input[type=submit] {
   cursor: pointer;
-
+  background-color: hsla(0, 0%, 5%, .7);
 }
 input[type=submit]:hover {
-  box-shadow: 0 0 15px hsla(0, 0%, 100%, .7);
+  box-shadow: 0 0 15px hsla(0, 0%, 100%, 1);
 }
 
 input {
@@ -104,8 +123,8 @@ input {
 }
 
 input::placeholder,textarea::placeholder {
-color:  #ccc !important;
-text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  color:  #ccc !important;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
 }
 
 textarea {
@@ -168,11 +187,6 @@ input:last-child {
   }
 }
 
-.form-group{
-  margin:60px auto;
-  padding:3em;
-}
-
 
 .modal-overlay{
   background: rgba(0,0,0,0.8);
@@ -197,16 +211,16 @@ input:last-child {
   text-align: center;
 }
 #close-modal{
-  color:  #000;
+  color:  #fff;
   font-size: 2.4em;
   padding: 0px 10px;
   position: absolute;
-  right: 0;
+  right: -40px;
   text-align: center;
   text-decoration: none;
-  top: 0;
+  top: -40px;
   z-index: 1;
 }
 #close-modal:hover{
-  color: #888;
+  color: #bbb;
 }

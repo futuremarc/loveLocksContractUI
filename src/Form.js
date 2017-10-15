@@ -44,7 +44,7 @@ class Form extends Component {
       let msg4 = splitMsg[3] || "";
 
       console.log(msg1,msg2,msg3,msg4);
-      let c = this.state.color || "#00ffeb" //default
+      let c = this.state.color || "#bf5240" //default
 
       let color = window.web3.fromUtf8(c);
       let personA = window.web3.fromUtf8($('#personA').val());
@@ -96,12 +96,12 @@ class Form extends Component {
         <div key="overlay" className="modal-overlay">
             <form>
               <div>
-               <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
-              <input placeholder="First person" id="personA"></input>
-              <input placeholder="Second person" id="personB"></input>
-              <textarea placeholder="Enter a memory or a message" id="message"></textarea>
+              <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
+              <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
+              <input placeholder="First person" id="personA" required></input>
+              <input placeholder="Second person" id="personB" required></input>
+              <textarea placeholder="Enter a memory or a message" id="message" required></textarea>
                 <div className="lockbar">
-                  <div className="cutoff"></div>
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
 

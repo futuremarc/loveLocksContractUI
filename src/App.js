@@ -70,7 +70,6 @@ let web3 = window.web3 || null;
           let msgs3 = String(data[2]).split(',');
           let msgs4 = String(data[3]).split(',');
 
-
           colors.map((item,index)=>{
             let str = web3.toAscii(item);
             colors[index] = str.substring(0,7);
@@ -94,8 +93,6 @@ let web3 = window.web3 || null;
             msgs4[index] = web3.toAscii(item);
           })
 
-          console.log(colors,personsA,msgs1)
-
           this.setState({
             colors: colors,
             personsA: personsA,
@@ -107,8 +104,6 @@ let web3 = window.web3 || null;
             msgs3: msgs3,
             msgs4: msgs4,
             isCanvasReady: true
-          },()=>{
-            console.log('STATESS',this.state)
           })
         });
 
@@ -134,8 +129,9 @@ let web3 = window.web3 || null;
     }
 
     componentDidMount() {
-
+      window.initGarden();
     }
+
 
     render() {
 
