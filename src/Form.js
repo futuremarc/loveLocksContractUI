@@ -94,29 +94,21 @@ class Form extends Component {
     return(
       <Portal>
         <div key="overlay" className="modal-overlay">
-          <div className="modal">
-          <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
-            <div className="container-fluid">
-              <div className="row">
-                <div className="form-group col-xs-12 col-md-6 col-lg-6 col-xl-6">
-                  <div id="form-header">Details to engrave on your Love Lock</div>
-                  <form id="form">
-                    <ColorPicker onColorPick={ this.onColorPick }/>
-                    <input placeholder="Enter the first person's name" className="form-control" id="personA"></input>
-                    <input placeholder="Enter the second person's name" className="form-control" id="personB"></input>
-                    <textarea placeholder="Enter a memory or a message"rows="3" className="form-control" id="message"></textarea>
-                    <input type="submit" className="form-control btn-default" onClick={this.onFormSubmit} id="submit"></input>
-                  </form>
+            <form>
+              <div>
+               <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
+              <input placeholder="First person" id="personA"></input>
+              <input placeholder="Second person" id="personB"></input>
+              <textarea placeholder="Enter a memory or a message" id="message"></textarea>
+                <div className="lockbar">
+                  <div className="cutoff"></div>
                 </div>
-                <div className="lock-canvas-col col-xs-12 col-md-6 col-lg-6 col-xl-6">
-                  <div id="lock-header">
-                    <span>Your location on the fence is: </span> <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
-                  </div>
-                  <div id="lock-canvas"></div>
-                </div>
+                <ColorPicker onColorPick={ this.onColorPick }/>
+
+                <input type="submit" onClick={this.onFormSubmit} value="Engrave"/>
+
               </div>
-            </div>
-          </div>
+            </form>
         </div>
       </Portal>
     )
@@ -125,3 +117,35 @@ class Form extends Component {
 }
 
 export default Form;
+
+
+//
+//
+//
+// <Portal>
+//   <div key="overlay" className="modal-overlay">
+//     <div className="modal">
+//     <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
+//       <div className="container-fluid">
+//         <div className="row">
+//           <div className="form-group col-xs-12 col-md-6 col-lg-6 col-xl-6">
+//             <div id="form-header">Details to engrave on your Love Lock</div>
+//             <form id="form">
+//               <ColorPicker onColorPick={ this.onColorPick }/>
+//               <input placeholder="Enter the first person's name" className="form-control" id="personA"></input>
+//               <input placeholder="Enter the second person's name" className="form-control" id="personB"></input>
+//               <textarea placeholder="Enter a memory or a message"rows="3" className="form-control" id="message"></textarea>
+//               <input type="submit" className="form-control btn-default" onClick={this.onFormSubmit} id="submit"></input>
+//             </form>
+//           </div>
+//           <div className="lock-canvas-col col-xs-12 col-md-6 col-lg-6 col-xl-6">
+//             <div id="lock-header">
+//               <span>Your location on the fence is: </span> <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
+//             </div>
+//             <div id="lock-canvas"></div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </Portal>

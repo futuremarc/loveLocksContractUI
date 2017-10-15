@@ -24,7 +24,8 @@ let web3 = window.web3 || null;
         messages: [],
         xPoses: [],
         yPoses: [],
-        isFormActive: null
+        isFormActive: null,
+        isCanvasReady:null
       }
 
       this.initContract = this.initContract.bind(this);
@@ -69,6 +70,32 @@ let web3 = window.web3 || null;
           let msgs3 = String(data[2]).split(',');
           let msgs4 = String(data[3]).split(',');
 
+
+          colors.map((item,index)=>{
+            let str = web3.toAscii(item);
+            colors[index] = str.substring(0,7);
+          })
+          personsA.map((item,index)=>{
+            personsA[index] = web3.toAscii(item);
+          })
+          personsB.map((item,index)=>{
+            personsB[index] = web3.toAscii(item);
+          })
+          msgs1.map((item,index)=>{
+            msgs1[index] = web3.toAscii(item);
+          })
+          msgs2.map((item,index)=>{
+            msgs2[index] = web3.toAscii(item);
+          })
+          msgs3.map((item,index)=>{
+            msgs3[index] = web3.toAscii(item);
+          })
+          msgs4.map((item,index)=>{
+            msgs4[index] = web3.toAscii(item);
+          })
+
+          console.log(colors,personsA,msgs1)
+
           this.setState({
             colors: colors,
             personsA: personsA,
@@ -80,6 +107,8 @@ let web3 = window.web3 || null;
             msgs3: msgs3,
             msgs4: msgs4,
             isCanvasReady: true
+          },()=>{
+            console.log('STATESS',this.state)
           })
         });
 
@@ -113,14 +142,15 @@ let web3 = window.web3 || null;
       let TableRows = []
       const {colors, personsA,personsB,msgs1,msgs2,msgs3,msgs4,xPoses,yPoses,xPos,yPos} = this.state;
 
+      console.log('this.state on render',this.state)
       _.each(personsA, (value, index) => {
 
         TableRows.push(
           <tr key={index}>
-            <td>{web3.toAscii(colors[index])}</td>
-            <td>{web3.toAscii(personsA[index])}</td>
-            <td>{web3.toAscii(personsB[index])}</td>
-            <td>{web3.toAscii(msgs1[index])}{web3.toAscii(msgs2[index])}{web3.toAscii(msgs3[index])}{web3.toAscii(msgs4[index])}</td>
+            <td>{colors[index]}</td>
+            <td>{personsA[index]}</td>
+            <td>{personsB[index]}</td>
+            <td>{msgs1[index]}{msgs2[index]}{msgs3[index]}{msgs4[index]}</td>
             <td>{xPoses[index]}</td>
             <td>{yPoses[index]}</td>
           </tr>

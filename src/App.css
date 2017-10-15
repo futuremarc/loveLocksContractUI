@@ -31,6 +31,106 @@ canvas{
   display:none;
 }
 
+h1 {
+  font-size: 30px;
+  width: 33%;
+  font-weight: normal;
+  position: absolute;
+  top: 40%; left: 30px;
+  color: #eee;
+  text-shadow: 0 10px 30px hsla(0, 0%, 0%, 1);
+}
+form {
+  width: 350px;
+  padding: 25px;
+  background-color: #efff00;
+  position: absolute;
+  top: 50%; right: 40%;
+  margin: 0 0;
+  transition: top 1s;
+  border-radius: 7%;
+}
+
+.animate-lock {
+  transform: rotateY(180deg);
+  top: -250px;
+  transition: transform 1s 1s, top 1s;
+}
+
+.lockbar {
+  height: 350px; width: 250px;
+  position: absolute;
+  top: -180px;
+  left: 50%;
+  margin-left: -125px;
+  border: 30px #000 solid;
+  border-bottom: none;
+  border-radius: 125px;
+  border-bottom-left-radius: 0;
+  z-index: -1;
+  transition: transform 1s, top 1s 1s;
+  transform-origin: 0% 50%;
+}
+.cutoff {
+  height: 50%; width: 250px;
+  background-color: hsl(0, 0%, 15%);
+  margin-bottom: -30px;
+  position: absolute;
+  bottom: 0;
+}
+
+
+input[type=submit] {
+  cursor: pointer;
+
+}
+input[type=submit]:hover {
+  box-shadow: 0 0 15px hsla(0, 0%, 100%, .7);
+}
+
+input {
+  height: 50px; width: 75%;
+  display: block;
+  margin: 8px auto;
+  font: 18px sans-serif;
+  text-align: center;
+  outline: 0;
+  border: none;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 5%, .3);
+  box-shadow: 0 0 7px hsla(0, 0%, 5%, .1) inset;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+
+input::placeholder,textarea::placeholder {
+color:  #ccc !important;
+text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+
+textarea {
+  height: 70px;
+  width: 95%;
+  display: block;
+  margin: 8px auto;
+  font: 18px sans-serif;
+  text-align: center;
+  outline: 0;
+  border: none;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 5%, .3);
+  box-shadow: 0 0 7px hsla(0, 0%, 5%, .0) inset;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  padding:5px;
+  resize:none;
+}
+
+input:last-child {
+  margin-top:25px;
+  margin-bottom: 0;
+}
+
 #lock-canvas{
   background:black;
   min-width:200px;
@@ -73,9 +173,6 @@ canvas{
   padding:3em;
 }
 
-input{
-  margin:5px 0px;
-}
 
 .modal-overlay{
   background: rgba(0,0,0,0.8);

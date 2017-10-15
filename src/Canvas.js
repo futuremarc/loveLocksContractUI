@@ -26,31 +26,29 @@ class Canvas extends Component {
   constructor(props) {
     super(props);
 
-            let data = {...props};
-
-            console.log('CANVAS PROPS',props)
-            data.colors.map((item,index)=>{
-              let str = web3.toAscii(item);
-              data.colors[index] = str.substring(0,7);
-            })
-            data.personsA.map((item,index)=>{
-              data.personsA[index] = web3.toAscii(item);
-            })
-            data.personsB.map((item,index)=>{
-              data.personsB[index] = web3.toAscii(item);
-            })
-            data.msgs1.map((item,index)=>{
-              data.msgs1[index] = web3.toAscii(item);
-            })
-            data.msgs2.map((item,index)=>{
-              data.msgs2[index] = web3.toAscii(item);
-            })
-            data.msgs3.map((item,index)=>{
-              data.msgs3[index] = web3.toAscii(item);
-            })
-            data.msgs4.map((item,index)=>{
-              data.msgs4[index] = web3.toAscii(item);
-            })
+    let data = {...props};
+    // data.colors.map((item,index)=>{
+    //   let str = web3.toAscii(item);
+    //   data.colors[index] = str.substring(0,7);
+    // })
+    // data.personsA.map((item,index)=>{
+    //   data.personsA[index] = web3.toAscii(item);
+    // })
+    // data.personsB.map((item,index)=>{
+    //   data.personsB[index] = web3.toAscii(item);
+    // })
+    // data.msgs1.map((item,index)=>{
+    //   data.msgs1[index] = web3.toAscii(item);
+    // })
+    // data.msgs2.map((item,index)=>{
+    //   data.msgs2[index] = web3.toAscii(item);
+    // })
+    // data.msgs3.map((item,index)=>{
+    //   data.msgs3[index] = web3.toAscii(item);
+    // })
+    // data.msgs4.map((item,index)=>{
+    //   data.msgs4[index] = web3.toAscii(item);
+    // })
 
 
     this.state = {
@@ -82,31 +80,11 @@ class Canvas extends Component {
 
   componentWillReceiveProps(nextProps){
 
+      console.log('componentWillReceiveProps', this.props, this.state, nextProps)
 
         let data = {...nextProps};
 
-        console.log('CANVAS PROPS',nextProps)
-        data.colors.map((item,index)=>{
-          data.colors[index] = web3.toAscii(item);
-        })
-        data.personsA.map((item,index)=>{
-          data.personsA[index] = web3.toAscii(item);
-        })
-        data.personsB.map((item,index)=>{
-          data.personsB[index] = web3.toAscii(item);
-        })
-        data.msgs1.map((item,index)=>{
-          data.msgs1[index] = web3.toAscii(item);
-        })
-        data.msgs2.map((item,index)=>{
-          data.msgs2[index] = web3.toAscii(item);
-        })
-        data.msgs3.map((item,index)=>{
-          data.msgs3[index] = web3.toAscii(item);
-        })
-        data.msgs4.map((item,index)=>{
-          data.msgs4[index] = web3.toAscii(item);
-        })
+
         this.state = {
           locks:data
         };
@@ -129,14 +107,38 @@ class Canvas extends Component {
     ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
 
+
+      const rectSize = 40;
+      const circSize = 15;
+      let cornerRadius = 25;
+      ctx.lineJoin = "round";
+      ctx.lineWidth = cornerRadius;
+
+
+      _.map(this.state.locks.colors, (value, index) => {
+        let x = this.state.locks.xPoses[index] * size;
+        let y = this.state.locks.yPoses[index] * size;
+
+        ctx.strokeStyle = '#222';
+
+        ctx.beginPath();
+        ctx.arc(x,y , circSize, Math.PI,0, false);
+        ctx.closePath();
+        ctx.lineWidth = 5;
+        ctx.stroke();
+
+      })
+
+
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#222";
+      ctx.strokeStyle = "#555";
       ctx.lineWidth = 4;
       ctx.beginPath();
       let x = 0;
       let y = 0;
       let z = 0;
       let counter = 0;
+
 
       for(let i = 0; i < Math.round(gH/size); i++){
 
@@ -164,12 +166,20 @@ class Canvas extends Component {
     ctx.fill();
     ctx.stroke();
 
+
+    cornerRadius = 10;
+    ctx.lineJoin = "round";
+    ctx.lineWidth = cornerRadius;
+
     _.map(this.state.locks.colors, (value, index) => {
-      ctx.strokeStyle = value
-      ctx.beginPath();
-      ctx.arc(this.state.locks.xPoses[index] * size,this.state.locks.yPoses[index] * size,10,0,2*Math.PI);
-      ctx.closePath()
-      ctx.stroke();
+      let x = this.state.locks.xPoses[index] * size;
+      let y = this.state.locks.yPoses[index] * size;
+
+      ctx.fillStyle = value;
+      ctx.strokeStyle = value;
+      ctx.strokeRect(x - (rectSize/2) , y+2  , rectSize, rectSize);
+      ctx.fillRect(x - (rectSize/2) , y+2 , rectSize, rectSize);
+
     })
 
     ctx.restore();
@@ -220,7 +230,7 @@ class Canvas extends Component {
   }
 
   componentWillMount(){
-
+    console.log('componentWillMount', this.props, this.state)
 
   }
 

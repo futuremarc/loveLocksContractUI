@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HuePicker } from 'react-color';
+import { SliderPicker } from 'react-color';
 
 class ColorPicker extends Component {
 
@@ -21,7 +21,7 @@ class ColorPicker extends Component {
 
   render() {
     return (
-      <HuePicker color="#00ffeb" onChangeComplete ={this.onChange} {...this.props}/>
+      <SliderPicker color="#00ffeb" onChangeComplete ={this.onChange} {...this.props}/>
     )
   }
 }
