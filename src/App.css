@@ -1,12 +1,56 @@
-html,body{
-  /*background-image: url(http://www.clker.com/cliparts/8/8/c/5/11949863832019937540moon-half.svg), linear-gradient(to bottom, #434265, #E76867, #FCBB9D);
-  background-repeat: no-repeat;
-  background-size: 100px 100px, auto;
-  background-blend-mode: exclusion;*/
-  border:none;
+#stars {
+  height: 200%;
+  position: relative;
+  border-radius: 50%;
 }
 
-#canvas{
+body {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #051729;
+  background-image: radial-gradient(
+    circle at 50% 120%,
+    #fcfcbd,
+    #104B88,
+    #360349,
+    #051729 60%
+  );
+}
+
+.star {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2px;
+  width: 2px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px white;
+  animation-name: glow;
+  animation-duration: 5s;
+  animation-timing-function: ease-out;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes glow {
+  25% {
+    opacity: 0.1;
+  }
+  50% {
+    box-shadow: 0 0 40px white;
+  }
+}
+
+@keyframes sky-rotate {
+  100%{
+    transform: rotate(360deg);
+  }
+}
+
+
+#grid-canvas{
   border:none;
   position:fixed;
   top:0;
@@ -15,10 +59,10 @@ html,body{
 }
 #grass-canvas{
   border:none;
-  top:0;
+  bottom:0;
   left:0;
   position:fixed;
-  z-index:-4;
+  z-index:1;
 }
 .App {
   text-align: center;
@@ -81,7 +125,7 @@ form {
   transform: rotateY(0deg);
 
   margin-left: -125px;
-  border: 52px #ddd solid;
+  border: 52px #bbb solid;
   border-bottom: none;
   border-radius: 125px;
   border-bottom-left-radius: 0;

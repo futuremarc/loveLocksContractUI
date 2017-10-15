@@ -11,7 +11,7 @@ class Form extends Component {
       color:null
     };
     this.onCloseClick = this.onCloseClick.bind(this);
-    this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.onColorPick = this.onColorPick.bind(this);
   }
 
@@ -21,8 +21,8 @@ class Form extends Component {
     closeForm();
   }
 
-  onFormSubmit(e){
-    console.log('onFormSubmit', this.props)
+  onSubmit(e){
+    console.log('onSubmit', this.props)
 
     let {miniToken} = this.props;
 
@@ -61,7 +61,7 @@ class Form extends Component {
         return
       }
 
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '120000'}).then((data,err)=>{
+      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '240000'}).then((data,err)=>{
         console.log(data,err);
       })
   }
@@ -106,7 +106,7 @@ class Form extends Component {
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
 
-                <input type="submit" onClick={this.onFormSubmit} value="Engrave"/>
+                <input type="submit" onClick={this.onSubmit} value="Engrave"/>
 
               </div>
             </form>
@@ -136,7 +136,7 @@ export default Form;
 //               <input placeholder="Enter the first person's name" className="form-control" id="personA"></input>
 //               <input placeholder="Enter the second person's name" className="form-control" id="personB"></input>
 //               <textarea placeholder="Enter a memory or a message"rows="3" className="form-control" id="message"></textarea>
-//               <input type="submit" className="form-control btn-default" onClick={this.onFormSubmit} id="submit"></input>
+//               <input type="submit" className="form-control btn-default" onClick={this.onSubmit} id="submit"></input>
 //             </form>
 //           </div>
 //           <div className="lock-canvas-col col-xs-12 col-md-6 col-lg-6 col-xl-6">
