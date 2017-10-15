@@ -61,7 +61,7 @@ class Form extends Component {
         return
       }
 
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '240000'}).then((data,err)=>{
+      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '215000'}).then((data,err)=>{
         console.log(data,err);
       })
   }

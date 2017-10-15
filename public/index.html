@@ -265,8 +265,8 @@
 
         window.animGrass = function()    {
           //ctx.fillStyle= gradient;
-          ctx.clearRect(0,0,renderCnv.width,renderCnv.height);
-          context.clearRect(0,0,renderCnv.width,renderCnv.height);
+          ctx.clearRect(0,0,renderCnv.width ,renderCnv.height);
+          context.clearRect(0,0,renderCnv.width ,renderCnv.height);
           var ntime= new Date().getTime();
           var elapsed= ntime-time;
           garden.paint( ctx, elapsed );
@@ -324,9 +324,9 @@
             displayCnv = document.getElementById('grass-canvas'); //render offscreen and copy to display cnv
             context = displayCnv.getContext('2d');
             ctx= renderCnv.getContext('2d');
-            renderCnv.width= window.innerWidth;
+            renderCnv.width= window.innerWidth * 1.35;
             renderCnv.height=window.innerHeight/4.5;
-            displayCnv.width= window.innerWidth;
+            displayCnv.width= window.innerWidth * 1.35;
             displayCnv.height=window.innerHeight/4.5;
 
 
@@ -334,9 +334,9 @@
             garden.initialize(renderCnv.width, renderCnv.height, 300);
 
             window.addEventListener('resize', (e)=>{
-              renderCnv.width = window.innerWidth;
+              renderCnv.width = window.innerWidth * 1.35;
               renderCnv.height = window.innerHeight/4.5;
-              displayCnv.width= window.innerWidth;
+              displayCnv.width= window.innerWidth * 1.35;
               displayCnv.height=window.innerHeight/4.5;
               garden.initialize(renderCnv.width, renderCnv.height, 300);
               animGrass();

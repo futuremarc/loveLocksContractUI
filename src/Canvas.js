@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 
 let cols = 500;
-let rows = 100;
+let rows = 200;
 let cells = rows * cols;
-let gridSize = 50;
+let gridSize = 10;
 let gW = cols * gridSize;
 let gH = rows * gridSize;
 let canvas, context;
@@ -15,13 +15,14 @@ let gX = 0,
     gY = 0,
     pX = 0,
     pY = 0,
-    gScale = 1,
+    gScale = 4,
     speed = 2;
 
-let isDown = false;
-let isDragging = false;
-let dragTimeout = null;
+let isDown = false, isDragging = false, dragTimeout = null;
 let isCoordValid = false;
+
+const rectSize = gridSize * .8;
+const lockBarSize = gridSize/2.85;
 
 function isValidPos(xPos,yPos){
   if ((xPos % 2 === 0 && yPos % 2 !== 0) || (xPos % 2 !== 0 && yPos % 2 === 0)) return true;
@@ -76,8 +77,8 @@ class Canvas extends Component {
 
 
   handle(delta) {
-    gScale += delta * 0.01;
-    if (gScale < .1) gScale = .1;
+    gScale += delta * 0.04;
+    if (gScale < 1) gScale = 1;
     this.drawGrid();
   }
 
@@ -90,26 +91,24 @@ class Canvas extends Component {
     ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
 
-    const rectSize = 40;
-    const circSize = 15;
 
     ctx.lineJoin = "round";
     ctx.strokeStyle = '#bbb';
-    ctx.lineWidth = 5;
+    ctx.lineWidth = gridSize/10;
 
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
 
       ctx.beginPath();
-      ctx.arc(x,y , circSize, Math.PI,0, false);
+      ctx.arc(x,y +.5, lockBarSize, Math.PI,0, false);
       ctx.closePath();
       ctx.stroke();
 
     })
 
     ctx.strokeStyle = "#666";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = gridSize/10;
     ctx.beginPath();
 
     let x = 0;
@@ -142,7 +141,7 @@ class Canvas extends Component {
     }
 
     ctx.stroke();
-    ctx.lineWidth = 10;
+    ctx.lineWidth = gridSize/5;
 
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
@@ -150,16 +149,14 @@ class Canvas extends Component {
 
       ctx.fillStyle = value;
       ctx.strokeStyle = value;
-      ctx.strokeRect(x - (rectSize/2) , y+2  , rectSize, rectSize);
-      ctx.fillRect(x - (rectSize/2) , y+2 , rectSize, rectSize);
+      ctx.strokeRect(x - (rectSize/2) , y+1  , rectSize, rectSize);
+      ctx.fillRect(x - (rectSize/2) , y+1 , rectSize, rectSize);
 
     })
-
     ctx.restore();
     context.drawImage(canvas, 0, 0);
 
   }
-
 
 
   onMouseDown(e){
@@ -179,7 +176,6 @@ class Canvas extends Component {
     if (!isDragging){
       const xPos = Math.round((e.nativeEvent.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
       const yPos = Math.round((e.nativeEvent.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
-      console.log('new lock?',xPos,yPos);
 
       if (isValidPos(xPos,yPos)) openForm(xPos,yPos);
       else console.log('not valid position')
@@ -190,41 +186,44 @@ class Canvas extends Component {
 
   onMouseMove(e){
     if (isDown) {
-      gX += -(pX - e.pageX) * speed;
-      gY += -(pY - e.pageY) * speed;
-      pX = e.pageX;
-      pY = e.pageY;
-      //if (gX > 0) gX = 0;
-      //if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
-      //if (gY > 0) gY = 0;
-      //if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
-       this.drawGrid();
+
+        gX += -(pX - e.pageX) * speed;
+        gY += -(pY - e.pageY) * speed;
+        pX = e.pageX;
+        pY = e.pageY;
+        if (gX > 0) gX = 0;
+        if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
+        if (gY > 0) gY = 0;
+        if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
+        this.drawGrid();
+
     }else{
 
       const xPos = Math.round((e.nativeEvent.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
       const yPos = Math.round((e.nativeEvent.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
-      console.log(xPos,yPos)
+
       if (isValidPos(xPos,yPos) && !isCoordValid){ //first time hovering valid
 
         isCoordValid = true;
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.lineWidth = 6 * gScale;
+
+        ctx.save();
+        ctx.translate(gX, gY);
+        ctx.scale(gScale, gScale);
+        ctx.lineWidth = gridSize/8;
         ctx.strokeStyle = "#00ff00";
-        ctx.fillStyle = "#00ff00";
         ctx.beginPath();
-        ctx.arc(xPos * gridSize * gScale,yPos * gridSize * gScale,15 * gScale,0,2 * Math.PI);
+        ctx.arc(xPos * gridSize ,yPos * gridSize, gridSize/4,0,2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
+        ctx.restore();
 
         context.drawImage(canvas, 0, 0);
 
       }else if (!isValidPos(xPos,yPos) && isCoordValid){ //first time hovering invalid
-        console.log('not valid')
         this.drawGrid();
         isCoordValid = false;
       }
-
-
     }
   }
 
@@ -256,7 +255,7 @@ class Canvas extends Component {
     displayCnv.addEventListener('DOMMouseScroll', this.wheel, false);
     displayCnv.onmousewheel = displayCnv.onmousewheel = this.wheel;
 
-    window.addEventListener('regridSize', (e)=>{
+    window.addEventListener('resize', (e)=>{
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       displayCnv.width = window.innerWidth;
