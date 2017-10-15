@@ -19,6 +19,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "react-minimalist-portal": "^2.1.1"
+    "react-minimalist-portal": "^2.1.1",
+    "react-color": "2.13.8"
   }
 }

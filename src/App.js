@@ -63,11 +63,10 @@ let web3 = window.web3 || undefined;
         console.log(miniToken)
         miniToken.getLoveLockMsgs().then((data)=>{
 
-          var arr1 = String(data[0]).split(',');
-          var arr2 = String(data[1]).split(',');
-          var arr3 = String(data[2]).split(',');
-          var arr4 = String(data[3]).split(',');
-          var messages = arr1.concat(arr2).concat(arr3).concat(arr4);
+          let msgs1 = String(data[0]).split(',');
+          let msgs2 = String(data[1]).split(',');
+          let msgs3 = String(data[2]).split(',');
+          let msgs4 = String(data[3]).split(',');
 
           this.setState({
             colors: colors,
@@ -75,7 +74,10 @@ let web3 = window.web3 || undefined;
             personsB: personsB,
             xPoses: xPoses,
             yPoses: yPoses,
-            messages: messages,
+            msgs1: msgs1,
+            msgs2: msgs2,
+            msgs3: msgs3,
+            msgs4: msgs4,
             isCanvasReady: true
           })
         });
@@ -108,7 +110,7 @@ let web3 = window.web3 || undefined;
     render() {
 
       let TableRows = []
-      const {colors, personsA,personsB,messages,xPoses,yPoses,xPos,yPos} = this.state;
+      const {colors, personsA,personsB,msgs1,msgs2,msgs3,msgs4,xPoses,yPoses,xPos,yPos} = this.state;
 
       _.each(personsA, (value, index) => {
 
@@ -117,7 +119,7 @@ let web3 = window.web3 || undefined;
             <td>{web3.toAscii(colors[index])}</td>
             <td>{web3.toAscii(personsA[index])}</td>
             <td>{web3.toAscii(personsB[index])}</td>
-            <td>{web3.toAscii(messages[index])}</td>
+            <td>{web3.toAscii(msgs1[index])}{web3.toAscii(msgs2[index])}</td>
             <td>{xPoses[index]}</td>
             <td>{yPoses[index]}</td>
           </tr>
@@ -145,7 +147,7 @@ let web3 = window.web3 || undefined;
                 {TableRows}
               </tbody>
             </table>
-            { this.state.isCanvasReady ? <Canvas colors={colors} personsA={personsA} personsB={personsB} messages={messages} xPoses={xPoses} yPoses= {yPoses} openForm={this.openForm} /> : null }
+            { this.state.isCanvasReady ? <Canvas colors={colors} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4}xPoses={xPoses} yPoses= {yPoses} openForm={this.openForm} /> : null }
             { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           </div>
         </div>

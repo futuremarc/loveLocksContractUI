@@ -122,7 +122,7 @@ class Canvas extends Component {
 
 
     _.each(xPoses, (value, index) => {
-      ctx.strokeStyle = `#${colors[index]}`;
+      ctx.strokeStyle = '#' + colors[index];
       ctx.beginPath();
       ctx.arc(xPoses[index] * size,yPoses[index] * size,10,0,2*Math.PI);
       ctx.stroke();
