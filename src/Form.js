@@ -77,9 +77,12 @@ class Form extends Component {
   }
   componentDidMount(){
     window.clearInterval(window.grassInterval)
+    $('#stars').children().removeClass('stars-anim');
   }
+  
   componentWillUnmount(){
     window.grassInterval = setInterval(window.animGrass, 100);
+    $('.stars').children().addClass('stars-anim');
   }
   render(){
 

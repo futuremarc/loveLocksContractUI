@@ -26,6 +26,9 @@ body {
   width: 2px;
   background-color: white;
   border-radius: 50%;
+}
+
+.star-anim{
   box-shadow: 0 0 10px white;
   animation-name: glow;
   animation-duration: 5s;
@@ -33,6 +36,7 @@ body {
   animation-direction: alternate;
   animation-iteration-count: infinite;
 }
+
 
 @keyframes glow {
   25% {
@@ -100,8 +104,7 @@ form {
   padding: 25px;
   background-color: #bf5240;
   position: absolute;
-  top: 40%; right: 40%;
-  margin: 0 0;
+
   transition: top 1s;
   border-radius: 7%;
 }
@@ -167,7 +170,7 @@ input {
 }
 
 input::placeholder,textarea::placeholder {
-  color:  #ccc !important;
+  color:  rgba(200,200,200,.6) !important;
   text-shadow: 1px 1px 1px rgba(0,0,0,.4);
 }
 
@@ -240,6 +243,9 @@ input:last-child {
   right: 0;
   top: 0;
   z-index:15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .modal-overlay:target{
   display: block;
