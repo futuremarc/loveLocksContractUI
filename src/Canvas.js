@@ -8,6 +8,7 @@ let size = 50;
 let gW = cols * size;
 let gH = rows * size;
 let canvas, ctx;
+let web3 = window.web3 || null
 
 let gX = 0,
     gY = 0,
@@ -23,9 +24,37 @@ let dragTimeout = null;
 class Canvas extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+
+            let data = {...props};
+
+            console.log('CANVAS PROPS',props)
+            data.colors.map((item,index)=>{
+              let str = web3.toAscii(item);
+              data.colors[index] = str.substring(0,7);
+            })
+            data.personsA.map((item,index)=>{
+              data.personsA[index] = web3.toAscii(item);
+            })
+            data.personsB.map((item,index)=>{
+              data.personsB[index] = web3.toAscii(item);
+            })
+            data.msgs1.map((item,index)=>{
+              data.msgs1[index] = web3.toAscii(item);
+            })
+            data.msgs2.map((item,index)=>{
+              data.msgs2[index] = web3.toAscii(item);
+            })
+            data.msgs3.map((item,index)=>{
+              data.msgs3[index] = web3.toAscii(item);
+            })
+            data.msgs4.map((item,index)=>{
+              data.msgs4[index] = web3.toAscii(item);
+            })
+
+
     this.state = {
-      data:null
+      locks:data
     };
     this.onCanvasMouseDown = this.onCanvasMouseDown.bind(this);
     this.onCanvasMouseUp = this.onCanvasMouseUp.bind(this);
@@ -51,6 +80,39 @@ class Canvas extends Component {
     event.returnValue = false;
   }
 
+  componentWillReceiveProps(nextProps){
+
+
+        let data = {...nextProps};
+
+        console.log('CANVAS PROPS',nextProps)
+        data.colors.map((item,index)=>{
+          data.colors[index] = web3.toAscii(item);
+        })
+        data.personsA.map((item,index)=>{
+          data.personsA[index] = web3.toAscii(item);
+        })
+        data.personsB.map((item,index)=>{
+          data.personsB[index] = web3.toAscii(item);
+        })
+        data.msgs1.map((item,index)=>{
+          data.msgs1[index] = web3.toAscii(item);
+        })
+        data.msgs2.map((item,index)=>{
+          data.msgs2[index] = web3.toAscii(item);
+        })
+        data.msgs3.map((item,index)=>{
+          data.msgs3[index] = web3.toAscii(item);
+        })
+        data.msgs4.map((item,index)=>{
+          data.msgs4[index] = web3.toAscii(item);
+        })
+        this.state = {
+          locks:data
+        };
+
+  }
+
 
   handle(delta) {
     gScale += delta * 0.01;
@@ -60,7 +122,6 @@ class Canvas extends Component {
 
 
   drawGrid() {
-    const {xPoses, yPoses, colors} = this.props;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -120,11 +181,11 @@ class Canvas extends Component {
     ctx.fill();
     ctx.stroke();
 
-
-    _.each(xPoses, (value, index) => {
-      ctx.strokeStyle = '#' + colors[index];
+    _.map(this.state.locks.colors, (value, index) => {
+      ctx.strokeStyle = value
       ctx.beginPath();
-      ctx.arc(xPoses[index] * size,yPoses[index] * size,10,0,2*Math.PI);
+      ctx.arc(this.state.locks.xPoses[index] * size,this.state.locks.yPoses[index] * size,10,0,2*Math.PI);
+      ctx.closePath()
       ctx.stroke();
     })
 
@@ -179,8 +240,6 @@ class Canvas extends Component {
 
 
   }
-
-  componentWillReceiveProps(){}
 
   componentDidMount(){
 

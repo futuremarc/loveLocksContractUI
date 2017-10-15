@@ -12,7 +12,7 @@ const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"
 const address = '0xc8e69905ba1b79a0d59a6dbf8e82eed483495d6d';
 let MiniToken, miniToken;
 
-let web3 = window.web3 || undefined;
+let web3 = window.web3 || null;
 
   class App extends Component {
     constructor(props) {
@@ -51,7 +51,6 @@ let web3 = window.web3 || undefined;
 
       MiniToken = contract(abi);
       miniToken = MiniToken.at(address);
-      console.log(miniToken);
 
       miniToken.getLoveLocks().then((data)=>{
         let colors = String(data[0]).split(',');
@@ -60,7 +59,9 @@ let web3 = window.web3 || undefined;
         let xPoses = String(data[3]).split(',');
         let yPoses = String(data[4]).split(',');
 
+
         console.log(miniToken)
+
         miniToken.getLoveLockMsgs().then((data)=>{
 
           let msgs1 = String(data[0]).split(',');
