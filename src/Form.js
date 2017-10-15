@@ -30,7 +30,12 @@ class Form extends Component {
 
       let message = $('#message').val();
 
-      let splitMsg = message.match(/.{32}/g);
+      var splitMsg = [];
+
+    for (var i = 0; i < message.length; i += 32) {
+        splitMsg.push(message.substring(i, i + 32));
+    }
+
       console.log(splitMsg)
 
       let msg1 = splitMsg[0] || "";
@@ -38,7 +43,10 @@ class Form extends Component {
       let msg3 = splitMsg[2] || "";
       let msg4 = splitMsg[3] || "";
 
-      let color = window.web3.fromUtf8(this.state.color);
+      console.log(msg1,msg2,msg3,msg4);
+      let c = this.state.color || "#00ffeb" //default
+
+      let color = window.web3.fromUtf8(c);
       let personA = window.web3.fromUtf8($('#personA').val());
       let personB = window.web3.fromUtf8($('#personB').val());
       let m1 = window.web3.fromUtf8(msg1);

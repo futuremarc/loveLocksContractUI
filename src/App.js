@@ -9,7 +9,7 @@ const Eth = require('ethjs-query')
 const EthContract = require('ethjs-contract')
 
 const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"}],"payable":false,"type":"function"}];
-const address = '0xc8e69905ba1b79a0d59a6dbf8e82eed483495d6d';
+const address = '0x04ee4432be99f1dba4e72fca8020ea07cd492d7d';
 let MiniToken, miniToken;
 
 let web3 = window.web3 || null;
@@ -120,7 +120,7 @@ let web3 = window.web3 || null;
             <td>{web3.toAscii(colors[index])}</td>
             <td>{web3.toAscii(personsA[index])}</td>
             <td>{web3.toAscii(personsB[index])}</td>
-            <td>{web3.toAscii(msgs1[index])}{web3.toAscii(msgs2[index])}</td>
+            <td>{web3.toAscii(msgs1[index])}{web3.toAscii(msgs2[index])}{web3.toAscii(msgs3[index])}{web3.toAscii(msgs4[index])}</td>
             <td>{xPoses[index]}</td>
             <td>{yPoses[index]}</td>
           </tr>

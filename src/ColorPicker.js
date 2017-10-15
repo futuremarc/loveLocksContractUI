@@ -21,7 +21,7 @@ class ColorPicker extends Component {
 
   render() {
     return (
-      <HuePicker onChangeComplete ={this.onChange} {...this.props}/>
+      <HuePicker color="#00ffeb" onChangeComplete ={this.onChange} {...this.props}/>
     )
   }
 }

@@ -129,23 +129,6 @@ class Canvas extends Component {
     ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
 
-    // for (let i = 0; i < cols; ++i) {
-    //
-    //      for (let j = 0; j < rows; ++j) {
-    //          ctx.fillRect(i * size, j * size, size, size);
-    //          ctx.strokeRect(i * size, j * size, size, size);
-    //          //ctx.fillText("box " + j + ", " + i, size, size);
-    //      }
-    //  }
-
-      // let bgGradient = ctx.createLinearGradient(0, 0, 0, gW/3);
-      // bgGradient.addColorStop(0, "#434265");
-      // bgGradient.addColorStop(0.5, "#E76867");
-      // bgGradient.addColorStop(1, "#FCBB9D");
-      // ctx.fillStyle = bgGradient;
-      // ctx.fillRect(0, 0, gW, gH);
-      //136378 130463
-      //112674 107527
       ctx.globalAlpha = 1;
       ctx.strokeStyle = "#222";
       ctx.lineWidth = 4;
