@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-let cols = 1000;
-let rows = 200;
+let cols = 500;
+let rows = 100;
 let cells = rows * cols;
 let size = 50;
 let gW = cols * size;
@@ -78,71 +78,62 @@ class Canvas extends Component {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-
     ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
 
+    const rectSize = 40;
+    const circSize = 15;
 
-      const rectSize = 40;
-      const circSize = 15;
-      let cornerRadius = 25;
-      ctx.lineJoin = "round";
-      ctx.lineWidth = cornerRadius;
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 5;
 
-      _.map(this.state.locks.colors, (value, index) => {
-        let x = this.state.locks.xPoses[index] * size;
-        let y = this.state.locks.yPoses[index] * size;
+    _.map(this.state.locks.colors, (value, index) => {
+      let x = this.state.locks.xPoses[index] * size;
+      let y = this.state.locks.yPoses[index] * size;
 
-        ctx.strokeStyle = '#ddd';
-
-        ctx.beginPath();
-        ctx.arc(x,y , circSize, Math.PI,0, false);
-        ctx.closePath();
-        ctx.lineWidth = 5;
-        ctx.stroke();
-
-      })
-
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#666";
-      ctx.lineWidth = 4;
       ctx.beginPath();
-      let x = 0;
-      let y = 0;
-      let z = 0;
-      let counter = 0;
+      ctx.arc(x,y , circSize, Math.PI,0, false);
+      ctx.closePath();
+      ctx.stroke();
 
+    })
 
-      for(let i = 0; i < Math.round(gH/size); i++){
+    ctx.strokeStyle = "#666";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
 
-        let z = counter;
-        while(x <= size*Math.round(gW/size)){
+    let x = 0;
+    let y = 0;
+    let z = 0;
+    let counter = 0;
 
-          if(z%2 == 0){
-            ctx.moveTo( x, y+size );
-            ctx.lineTo( x+size, y );
-          }
-          else{
-            ctx.moveTo(x,y);
-            ctx.lineTo(x+size, y+size);
-          }
+    for(let i = 0; i < Math.round(gH/size); i++){
 
-          x += size;
-          z += 1;
+      let z = counter;
+      while(x <= size*Math.round(gW/size)){
+
+        if(z%2 == 0){
+          ctx.moveTo( x, y+size );
+          ctx.lineTo( x+size, y );
         }
+        else{
+          ctx.moveTo(x,y);
+          ctx.lineTo(x+size, y+size);
+        }
+
+        x += size;
+        z += 1;
+      }
 
       x = 0;
       y = y + size;
       counter += 1;
 
     }
-    ctx.fill();
+
     ctx.stroke();
-
-
-    cornerRadius = 10;
-    ctx.lineJoin = "round";
-    ctx.lineWidth = cornerRadius;
+    ctx.lineWidth = 10;
 
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * size;

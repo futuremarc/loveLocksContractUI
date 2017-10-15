@@ -236,8 +236,7 @@
     })();
 
 
-        function _doit()    {
-
+        window.animGrass = function()    {
           ctx.fillStyle= gradient;
           ctx.fillRect(0,0,canvas.width,canvas.height);
           var ntime= new Date().getTime();
@@ -245,12 +244,12 @@
           garden.paint( ctx, elapsed );
 
           // lerp.
-          if ( elapsed>nextLerpTime ) {
-            lerpindex= Math.floor((elapsed-nextLerpTime)/nextLerpTime);
-            if ( (elapsed-nextLerpTime)%nextLerpTime<lerpTime ) {
-              lerp( (elapsed-nextLerpTime)%nextLerpTime, lerpTime );
-            }
-          }
+          // if ( elapsed>nextLerpTime ) {
+          //   lerpindex= Math.floor((elapsed-nextLerpTime)/nextLerpTime);
+          //   if ( (elapsed-nextLerpTime)%nextLerpTime<lerpTime ) {
+          //     lerp( (elapsed-nextLerpTime)%nextLerpTime, lerpTime );
+          //   }
+          // }
 
         }
 
@@ -305,22 +304,22 @@
               canvas.width = window.innerWidth;
               canvas.height = window.innerHeight;
               garden.initialize(canvas.width, canvas.height, 300);
-
+              animGrass();
             })
 
             lerp(0,2000);
 
             time= new Date().getTime();
-            //interval = setInterval(_doit, 30);
+            window.grassInterval = setInterval(animGrass, 100);
 
-            function loop() {
-              requestAnimationFrame( loop );
-              _doit();
-          }
-
-            time= new Date().getTime();
-            window.requestAnimationFrame(_doit);
-            loop();
+          //   function loop() {
+          //     requestAnimationFrame( loop );
+          //     animGrass();
+          // }
+          //
+          //   time= new Date().getTime();
+          //   window.requestAnimationFrame(animGrass);
+          //   loop();
         }
 
         // sky colors

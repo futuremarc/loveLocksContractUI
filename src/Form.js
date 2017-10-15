@@ -26,11 +26,9 @@ class Form extends Component {
 
     let {miniToken} = this.props;
 
-      e.preventDefault();
-
-      let message = $('#message').val();
-
-      var splitMsg = [];
+    e.preventDefault();
+    let message = $('#message').val();
+    var splitMsg = [];
 
     for (var i = 0; i < message.length; i += 32) {
         splitMsg.push(message.substring(i, i + 32));
@@ -78,7 +76,10 @@ class Form extends Component {
   componentWillMount(){
   }
   componentDidMount(){
-
+    window.clearInterval(window.grassInterval)
+  }
+  componentWillUnmount(){
+    window.grassInterval = setInterval(window.animGrass, 100);
   }
   render(){
 
