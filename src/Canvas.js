@@ -1,12 +1,10 @@
-import $ from 'jquery';
 import React, { Component } from 'react';
-import Portal from 'react-minimalist-portal';
 import _ from 'lodash';
 
-let cols = 100;
+let cols = 300;
 let rows = 100;
 let cells = rows * cols;
-let size = 25;
+let size = 50;
 let gW = cols * size;
 let gH = rows * size;
 let canvas, ctx;
@@ -21,17 +19,6 @@ let gX = 0,
 let isDown = false;
 let isDragging = false;
 let dragTimeout = null;
-
-
-let grid = [];
-for (let i = 0; i < cells; ++i) {
-    if (Math.random() < 0.5) {
-        grid.push("#FF8ED6");
-    } else {
-        grid.push("#8ED6FF");
-    }
-}
-
 
 class Canvas extends Component {
 
@@ -67,13 +54,13 @@ class Canvas extends Component {
 
   handle(delta) {
     gScale += delta * 0.01;
-    if (gScale < 1) gScale = 1;
+    if (gScale < .1) gScale = .1;
     this.drawGrid();
   }
 
 
   drawGrid() {
-    const {xPoses, yPoses} = this.props;
+    const {xPoses, yPoses, colors} = this.props;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -84,26 +71,33 @@ class Canvas extends Component {
     // for (let i = 0; i < cols; ++i) {
     //
     //      for (let j = 0; j < rows; ++j) {
-    //          ctx.fillStyle = grid[i * rows + j];
     //          ctx.fillRect(i * size, j * size, size, size);
     //          ctx.strokeRect(i * size, j * size, size, size);
     //          //ctx.fillText("box " + j + ", " + i, size, size);
     //      }
     //  }
 
+      // let bgGradient = ctx.createLinearGradient(0, 0, 0, gW/3);
+      // bgGradient.addColorStop(0, "#434265");
+      // bgGradient.addColorStop(0.5, "#E76867");
+      // bgGradient.addColorStop(1, "#FCBB9D");
+      // ctx.fillStyle = bgGradient;
+      // ctx.fillRect(0, 0, gW, gH);
+      //136378 130463
+      //112674 107527
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#1e1e1e";
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#222";
+      ctx.lineWidth = 4;
       ctx.beginPath();
       let x = 0;
       let y = 0;
       let z = 0;
       let counter = 0;
 
-      for(let i = 0; i < Math.round(gW/size); i++){
+      for(let i = 0; i < Math.round(gH/size); i++){
 
         let z = counter;
-        while(x <= size*Math.round(gH/size)){
+        while(x <= size*Math.round(gW/size)){
 
           if(z%2 == 0){
             ctx.moveTo( x, y+size );
@@ -128,9 +122,9 @@ class Canvas extends Component {
 
 
     _.each(xPoses, (value, index) => {
+      ctx.strokeStyle = `#${colors[index]}`;
       ctx.beginPath();
       ctx.arc(xPoses[index] * size,yPoses[index] * size,10,0,2*Math.PI);
-      console.log(xPoses[index],yPoses[index])
       ctx.stroke();
     })
 
@@ -169,11 +163,11 @@ class Canvas extends Component {
       gY += -(pY - e.pageY) * speed;
       pX = e.pageX;
       pY = e.pageY;
-      if (gX > 0) gX = 0;
-      if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
-      if (gY > 0) gY = 0;
-      if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
-      this.drawGrid();
+      //if (gX > 0) gX = 0;
+      //if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
+      //if (gY > 0) gY = 0;
+      //if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
+       this.drawGrid();
     }
   }
 
@@ -186,36 +180,39 @@ class Canvas extends Component {
 
   }
 
-  componentWillReceiveProps(){
-  }
+  componentWillReceiveProps(){}
 
   componentDidMount(){
 
     canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     ctx = canvas.getContext("2d");
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
     ctx.font = "14px sans-serif";
 
-    this.drawGrid(0, 0);
+    this.drawGrid();
 
-    window.addEventListener('DOMMouseScroll', this.wheel, false);
-    window.onmousewheel = document.onmousewheel = this.wheel;
+    canvas.addEventListener('DOMMouseScroll', this.wheel, false);
+    canvas.onmousewheel = canvas.onmousewheel = this.wheel;
+
+    window.addEventListener('resize', (e)=>{
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      this.drawGrid();
+    })
+
   }
 
   render(){
 
     return(
-      <Portal>
-        <div key="overlay" className="modal-overlay">
-          <div className="modal">
-            <canvas onMouseDown={this.onCanvasMouseDown} onMouseOut={this.onCanvasMouseOut} onMouseMove={this.onCanvasMouseMove} onMouseUp={this.onCanvasMouseUp} id="canvas" width="600" height="400"></canvas>
-          </div>
-        </div>
-      </Portal>
+        <canvas onMouseDown={this.onCanvasMouseDown} onMouseOut={this.onCanvasMouseOut} onMouseMove={this.onCanvasMouseMove} onMouseUp={this.onCanvasMouseUp} id="canvas"></canvas>
     )
   }
 
 }
+
 
 export default Canvas;
