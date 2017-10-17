@@ -34,15 +34,12 @@ class Form extends Component {
         splitMsg.push(message.substring(i, i + 32));
     }
 
-      console.log(splitMsg)
-
       let msg1 = splitMsg[0] || "";
       let msg2 = splitMsg[1] || "";
       let msg3 = splitMsg[2] || "";
       let msg4 = splitMsg[3] || "";
 
-      console.log(msg1,msg2,msg3,msg4);
-      let c = this.state.color || "#bf5240" //default
+      let c = this.state.color || "#bf4040" //default
 
       let color = window.web3.fromUtf8(c);
       let personA = window.web3.fromUtf8($('#personA').val());
@@ -61,13 +58,12 @@ class Form extends Component {
         return
       }
 
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '215000'}).then((data,err)=>{
+      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '240000'}).then((data,err)=>{
         console.log(data,err);
       })
   }
 
   onColorPick(e){
-      console.log(e)
       this.setState({
         color: e.hex
       })
@@ -75,14 +71,16 @@ class Form extends Component {
 
   componentWillMount(){
   }
+
   componentDidMount(){
-    window.clearInterval(window.grassInterval)
-    $('#stars').children().removeClass('stars-anim');
+    window.stopAnimGrass();
+    $('#stars div').removeClass('star-anim');
+    document.body.className = document.body.className.replace("point-mouse","");
   }
-  
+
   componentWillUnmount(){
-    window.grassInterval = setInterval(window.animGrass, 100);
-    $('.stars').children().addClass('stars-anim');
+    window.startAnimGrass();
+    $('#stars div').addClass('star-anim');
   }
   render(){
 
@@ -98,58 +96,22 @@ class Form extends Component {
     return(
       <Portal>
         <div key="overlay" className="modal-overlay">
-            <form>
+            <form style={{background:"#bf4040"}} className="big-lock">
               <div>
               <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
-              <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
-              <input placeholder="First person" id="personA" required></input>
-              <input placeholder="Second person" id="personB" required></input>
-              <textarea placeholder="Enter a memory or a message" id="message" required></textarea>
-                <div className="lockbar">
+              <div style={{display:'none'}}><span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span></div>
+              <input type="text" placeholder="First person" id="personA" className="name-input" maxLength="32"></input><span id="lovers-cross">×</span><input type="text" placeholder="Second person" id="personB" className="name-input" maxLength="32"></input>
+              <textarea placeholder="Enter a memory or a message" id="message" maxLength="128"></textarea>
+                <div className="lock-bar">
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
-
                 <input type="submit" onClick={this.onSubmit} value="Engrave"/>
-
               </div>
             </form>
         </div>
       </Portal>
     )
   }
-
 }
 
 export default Form;
-
-
-//
-//
-//
-// <Portal>
-//   <div key="overlay" className="modal-overlay">
-//     <div className="modal">
-//     <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
-//       <div className="container-fluid">
-//         <div className="row">
-//           <div className="form-group col-xs-12 col-md-6 col-lg-6 col-xl-6">
-//             <div id="form-header">Details to engrave on your Love Lock</div>
-//             <form id="form">
-//               <ColorPicker onColorPick={ this.onColorPick }/>
-//               <input placeholder="Enter the first person's name" className="form-control" id="personA"></input>
-//               <input placeholder="Enter the second person's name" className="form-control" id="personB"></input>
-//               <textarea placeholder="Enter a memory or a message"rows="3" className="form-control" id="message"></textarea>
-//               <input type="submit" className="form-control btn-default" onClick={this.onSubmit} id="submit"></input>
-//             </form>
-//           </div>
-//           <div className="lock-canvas-col col-xs-12 col-md-6 col-lg-6 col-xl-6">
-//             <div id="lock-header">
-//               <span>Your location on the fence is: </span> <span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span>
-//             </div>
-//             <div id="lock-canvas"></div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-// </Portal>

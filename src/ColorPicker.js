@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { SliderPicker } from 'react-color';
-import $ from 'jquery';
+let form;
 
 class ColorPicker extends Component {
 
@@ -15,19 +15,21 @@ class ColorPicker extends Component {
     onColorPick(e);
   }
 
+  componentDidMount(){
+    form = document.getElementsByTagName('form')[0];
+  }
+
   onChange(e){
-    $('form').css('background',e.hex);
+    form.style.background = e.hex;
   }
 
   shouldComponentUpdate(nextProps) {
     return (this.props.messages !== nextProps.messages);
-}
-
-
+  }
 
   render() {
     return (
-      <SliderPicker color="#bf5240" onChange={this.onChange} onChangeComplete ={this.onChangeComplete} {...this.props}/>
+      <SliderPicker color="#bf4040" onChange={this.onChange} onChangeComplete ={this.onChangeComplete} {...this.props}/>
     )
   }
 }

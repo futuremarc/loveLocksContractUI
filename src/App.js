@@ -2,15 +2,31 @@ import React, { Component } from 'react';
 import './App.css';
 import Web3 from 'web3';
 import _ from 'lodash';
-import Form from './Form.js'
-import Canvas from './Canvas.js'
+import Form from './Form';
+import Canvas from './Canvas';
+import SearchBar from './SearchBar'
 
-const Eth = require('ethjs-query')
-const EthContract = require('ethjs-contract')
+const Eth = require('ethjs-query');
+const EthContract = require('ethjs-contract');
 
-const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"}],"payable":false,"type":"function"}];
-const address = '0x04ee4432be99f1dba4e72fca8020ea07cd492d7d';
+const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"},{"name":"id","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"},{"name":"","type":"address[]"}],"payable":false,"type":"function"}];
+const address = '0x4a21a48052721b746be58592522a29743e03de2a';
 let MiniToken, miniToken;
+
+function retryWeb3Provider(){
+  let eth, contract;
+
+  if (web3.currentProvider){
+    console.log('found web3 on retry')
+  }else{
+    console.log('no web3 on retry')
+    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+  }
+
+  eth = new Eth(web3.currentProvider);
+  contract = new EthContract(eth);
+  this.initContract(contract);
+}
 
 let web3 = window.web3 || null;
 
@@ -25,27 +41,27 @@ let web3 = window.web3 || null;
         xPoses: [],
         yPoses: [],
         isFormActive: null,
-        isCanvasReady:null
+        isCanvasReady:null,
+        shouldGridMove: null
       }
 
       this.initContract = this.initContract.bind(this);
       this.openForm = this.openForm.bind(this);
       this.closeForm = this.closeForm.bind(this);
-
+      this.moveGrid = this.moveGrid.bind(this);
     }
 
+    openForm(xPos,yPos){
+      this.setState({
+        isFormActive: true,
+        xPos:xPos,
+        yPos:yPos
+      });
+    }
 
-      openForm(xPos,yPos){
-        this.setState({
-          isFormActive: true,
-          xPos:xPos,
-          yPos:yPos
-        });
-      }
-
-      closeForm(e){
-        this.setState({isFormActive: null});
-      }
+    closeForm(e){
+      this.setState({isFormActive: null});
+    }
 
 
     initContract (contract) {
@@ -59,7 +75,7 @@ let web3 = window.web3 || null;
         let personsB = String(data[2]).split(',');
         let xPoses = String(data[3]).split(',');
         let yPoses = String(data[4]).split(',');
-
+        let ids = String(data[5]).split(',');
 
         console.log(miniToken)
 
@@ -94,6 +110,7 @@ let web3 = window.web3 || null;
           })
 
           this.setState({
+            ids: ids,
             colors: colors,
             personsA: personsA,
             personsB: personsB,
@@ -111,21 +128,42 @@ let web3 = window.web3 || null;
 
     }
 
+    moveGrid(x,y){
+      this.setState({
+        shouldGridMove:true,
+        moveX:x,
+        moveY:y
+      },()=>{
+        this.setState({
+          shouldGridMove:null,
+          moveX:null,
+          moveY:null
+        })
+      })
+    }
+
     componentWillMount() {
 
-      if (typeof web3 !== 'undefined') {
-        window.web3 = new Web3(web3.currentProvider);
+      if (typeof web3 !== 'undefined' && web3 != null) {
+
+        if (web3.currentProvider){
         console.log('found web3 already!')
-       }else {
+        window.web3 = new Web3(web3.currentProvider);
+        const eth = new Eth(web3.currentProvider)
+        const contract = new EthContract(eth);
+        this.initContract(contract);
+
+        } else {
+            setTimeout(retryWeb3Provider,700);
+          }
+
+       } else {
         console.log('No web3? You should consider trying MetaMask!')
         web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        const eth = new Eth(web3.currentProvider)
+        const contract = new EthContract(eth);
+        this.initContract(contract);
        }
-
-      console.log(web3.eth.defaultAccount);
-      const eth = new Eth(web3.currentProvider)
-      const contract = new EthContract(eth);
-      this.initContract(contract);
-
     }
 
     componentDidMount() {
@@ -136,47 +174,15 @@ let web3 = window.web3 || null;
     render() {
 
       let TableRows = []
-      const {colors, personsA,personsB,msgs1,msgs2,msgs3,msgs4,xPoses,yPoses,xPos,yPos} = this.state;
-
+      const {colors, personsA, personsB, msgs1, msgs2, msgs3, msgs4,xPoses,yPoses,xPos,yPos, ids} = this.state;
+      const {shouldGridMove, moveX, moveY} = this.state;
       console.log('this.state on render',this.state)
-      _.each(personsA, (value, index) => {
-
-        TableRows.push(
-          <tr key={index}>
-            <td>{colors[index]}</td>
-            <td>{personsA[index]}</td>
-            <td>{personsB[index]}</td>
-            <td>{msgs1[index]}{msgs2[index]}{msgs3[index]}{msgs4[index]}</td>
-            <td>{xPoses[index]}</td>
-            <td>{yPoses[index]}</td>
-          </tr>
-        )
-      })
 
       return (
         <div className="App">
-          <div className="App-header">
-            <h2>crypto love locks</h2>
-          </div>
-          <div className="App-Content">
-            <table className="App-table">
-              <thead>
-                <tr>
-                  <th>Color</th>
-                  <th>Person A</th>
-                  <th>Person B</th>
-                  <th>Message</th>
-                  <th>xPos</th>
-                  <th>yPos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {TableRows}
-              </tbody>
-            </table>
-            { this.state.isCanvasReady ? <Canvas colors={colors} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4}xPoses={xPoses} yPoses= {yPoses} openForm={this.openForm} /> : null }
-            { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
-          </div>
+          { this.state.isCanvasReady ? <Canvas moveX={moveX} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
+          { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
+          <SearchBar moveX={moveX} moveY={moveY} moveGrid={this.moveGrid} xPoses={xPoses} yPoses= {yPoses} ids={ids}/>
         </div>
       );
     }

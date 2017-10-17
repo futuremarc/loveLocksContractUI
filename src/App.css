@@ -54,7 +54,7 @@ body {
 }
 
 
-#grid-canvas{
+#display-canvas{
   border:none;
   position:fixed;
   top:0;
@@ -75,6 +75,7 @@ body {
 
 .App-table{
   display: none;
+  color:white;
 }
 
 .App-intro {
@@ -90,6 +91,10 @@ body {
   display:none;
 }
 
+.point-mouse{
+  cursor: pointer;
+}
+
 h1 {
   font-size: 30px;
   width: 33%;
@@ -99,14 +104,34 @@ h1 {
   color: #eee;
   text-shadow: 0 10px 30px hsla(0, 0%, 0%, 1);
 }
-form {
-  width: 420px;
-  padding: 25px;
-  background-color: #bf5240;
-  position: absolute;
 
+form{
+  min-width: 450px;
+  max-width:650px;
+    min-height:350px;
+
+}
+
+.big-lock {
+
+  padding: 25px;
+  margin-top:4%;
+  background-color: #bf4040;
+  position: absolute;
   transition: top 1s;
   border-radius: 7%;
+
+}
+
+.preview-lock{
+  position:fixed;
+  z-index: 100;
+}
+
+.lock-body{
+  min-width: 300px;
+  max-width: 400px;
+  max-height:200px;
 }
 
 .lock-coords{
@@ -115,18 +140,16 @@ form {
 
 .animate-lock{
   transform: rotateY(180deg);
-
   top: -250px;
   transition: transform 1s 1s, top 1s;
 }
 
-.lockbar {
+.lock-bar {
   height: 350px; width: 320px;
   position: absolute;
   top: -230px;
   left: 41.5%;
   transform: rotateY(0deg);
-
   margin-left: -125px;
   border: 52px #bbb solid;
   border-bottom: none;
@@ -137,27 +160,28 @@ form {
   transition: transform 1s, top 1s 1s;
   transform-origin: 10% 50%;
 }
-.cutoff {
-  height: 50%; width: 250px;
-  background-color: hsl(0, 0%, 15%);
-  margin-bottom: -30px;
+
+
+.preview-bar {
+  height: 275px; width: 300px;
   position: absolute;
-  bottom: 0;
-}
-
-
-input[type=submit] {
-  cursor: pointer;
-  background-color: hsla(0, 0%, 5%, .7);
-}
-input[type=submit]:hover {
-  box-shadow: 0 0 15px hsla(0, 0%, 100%, 1);
+  top: -230px;
+  left: 41.5%;
+  transform: rotateY(0deg);
+  margin-left: -125px;
+  border: 42px #bbb solid;
+  border-bottom: none;
+  border-radius: 150px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  z-index: -1;
+  transition: transform 1s, top 1s 1s;
+  transform-origin: 10% 50%;
 }
 
 input {
-  height: 50px; width: 75%;
+  height: 50px;
   display: block;
-  margin: 8px auto;
   font: 18px sans-serif;
   text-align: center;
   outline: 0;
@@ -169,6 +193,27 @@ input {
   text-shadow: 1px 1px 1px rgba(0,0,0,.4);
 }
 
+input[type=submit] {
+  cursor: pointer;
+  width: 75%;
+  background-color: hsla(0, 0%, 5%, .7);
+  margin: 14px auto;
+}
+
+input[type=submit]:hover {
+  box-shadow: 0 0 15px hsla(0, 0%, 100%, 1);
+}
+
+#lovers-cross{
+  padding:7px;
+  color:#fff;
+}
+
+.name-input{
+  width:47.2%;
+  display:inline;
+}
+
 input::placeholder,textarea::placeholder {
   color:  rgba(200,200,200,.6) !important;
   text-shadow: 1px 1px 1px rgba(0,0,0,.4);
@@ -176,9 +221,10 @@ input::placeholder,textarea::placeholder {
 
 textarea {
   height: 70px;
-  width: 95%;
+  width: 100%;
   display: block;
-  margin: 8px auto;
+  margin: 14px auto;
+  margin-bottom:20px;
   font: 18px sans-serif;
   text-align: center;
   outline: 0;
@@ -192,8 +238,41 @@ textarea {
   resize:none;
 }
 
+
+.name-preview {
+  width:47.2%;
+  display:inline;
+  margin: 14px auto;
+  font: 38px sans-serif;
+  text-align: center;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  overflow-wrap: break-word;
+}
+
+
+
+.msg-preview {
+  height: auto;
+  width: 100%;
+  display: block;
+  margin: auto;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  font: 20px sans-serif;
+  text-align: center;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  padding:15px;
+  overflow-wrap: break-word;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 0%, .1);
+  box-shadow: 0 0 7px hsla(0, 0%, 0%, .0) inset;
+
+}
+
 input:last-child {
-  margin-top:25px;
+  margin-top:40px;
   margin-bottom: 0;
 }
 
@@ -234,7 +313,6 @@ input:last-child {
   }
 }
 
-
 .modal-overlay{
   background: rgba(0,0,0,0.8);
   bottom: 0;
@@ -242,7 +320,7 @@ input:last-child {
   position: fixed;
   right: 0;
   top: 0;
-  z-index:15;
+  z-index:10;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,21 +332,25 @@ input:last-child {
   z-index: 99999;
 }
 
-#lock-header{
-  text-align: center;
+#search{
+  position: fixed;
+  top:20px;
+  right:10px;
+  font-size:16px;
+  width:300px;
+  z-index:20;
 }
-#form-header{
-  text-align: center;
-}
+
 #close-modal{
-  color:  #fff;
-  font-size: 2.4em;
+  color:  rgba(255,255,255,.4);
+  font-size: 4.4em;
   padding: 0px 10px;
   position: absolute;
-  right: -40px;
+  right: -80px;
+  font-weight:200;
   text-align: center;
   text-decoration: none;
-  top: -40px;
+  top: -200px;
   z-index: 1;
 }
 #close-modal:hover{
