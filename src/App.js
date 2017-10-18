@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import _ from 'lodash';
 import Form from './Form';
 import Canvas from './Canvas';
+import About from './About';
 import SearchBar from './SearchBar'
 
 const Eth = require('ethjs-query');
@@ -42,13 +43,18 @@ let web3 = window.web3 || null;
         yPoses: [],
         isFormActive: null,
         isCanvasReady:null,
-        shouldGridMove: null
+        isAboutActive:true,
+        shouldGridMove: null,
+        shouldZoom:null
       }
 
       this.initContract = this.initContract.bind(this);
       this.openForm = this.openForm.bind(this);
       this.closeForm = this.closeForm.bind(this);
       this.moveGrid = this.moveGrid.bind(this);
+      this.zoom = this.zoom.bind(this);
+      this.openAbout = this.openAbout.bind(this);
+      this.closeAbout = this.closeAbout.bind(this);
     }
 
     openForm(xPos,yPos){
@@ -57,6 +63,19 @@ let web3 = window.web3 || null;
         xPos:xPos,
         yPos:yPos
       });
+    }
+
+    zoom(e){
+      const direction = e.nativeEvent.target.id;
+      this.setState({
+        shouldZoom:true,
+        zoomDirection:direction
+      },()=>{
+        this.setState({
+          shouldZoom:null,
+          zoomDirection:null
+        })
+      })
     }
 
     closeForm(e){
@@ -170,19 +189,38 @@ let web3 = window.web3 || null;
       window.initGarden();
     }
 
+    openAbout(){
+      this.setState({
+        isAboutActive: true
+      });
+    }
+
+    closeAbout(){
+      this.setState({
+        isAboutActive: null
+      });
+    }
+
 
     render() {
 
       let TableRows = []
       const {colors, personsA, personsB, msgs1, msgs2, msgs3, msgs4,xPoses,yPoses,xPos,yPos, ids} = this.state;
-      const {shouldGridMove, moveX, moveY} = this.state;
+      const {shouldGridMove, moveX, moveY,shouldZoom, zoomDirection} = this.state;
       console.log('this.state on render',this.state)
 
       return (
         <div className="App">
-          { this.state.isCanvasReady ? <Canvas moveX={moveX} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
+          { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
           { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
+          { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
+
+          <div id="header"><img src="/logo-white.png"></img></div>
           <SearchBar moveX={moveX} moveY={moveY} moveGrid={this.moveGrid} xPoses={xPoses} yPoses= {yPoses} ids={ids}/>
+          <div onMouseDown={this.zoom}className="zoom" id="zoom-in"><img id="in" src="/zoom-in.png"></img></div>
+          <div onMouseDown={this.zoom}className="zoom" id="zoom-out"><img id="out" src="/zoom-out.png"></img></div>
+          <div onMouseDown={this.openAbout} id="about-btn">?</div>
+
         </div>
       );
     }

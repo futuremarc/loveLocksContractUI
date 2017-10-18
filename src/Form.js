@@ -58,7 +58,7 @@ class Form extends Component {
         return
       }
 
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '240000'}).then((data,err)=>{
+      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((data,err)=>{
         console.log(data,err);
       })
   }
@@ -98,9 +98,9 @@ class Form extends Component {
         <div key="overlay" className="modal-overlay">
             <form style={{background:"#bf4040"}} className="big-lock">
               <div>
-              <a href="#" onClick={this.onCloseClick} id="close-modal"><span>×</span></a>
+              <a href="#" onClick={this.onCloseClick} id="close-form"><span>×</span></a>
               <div style={{display:'none'}}><span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span></div>
-              <input type="text" placeholder="First person" id="personA" className="name-input" maxLength="32"></input><span id="lovers-cross">×</span><input type="text" placeholder="Second person" id="personB" className="name-input" maxLength="32"></input>
+              <input type="text" placeholder="You" id="personA" className="name-input" maxLength="32"></input><span id="lovers-cross">×</span><input type="text" placeholder="Your love" id="personB" className="name-input" maxLength="32"></input>
               <textarea placeholder="Enter a memory or a message" id="message" maxLength="128"></textarea>
                 <div className="lock-bar">
                 </div>

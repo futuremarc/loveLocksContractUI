@@ -14,6 +14,7 @@ let displayCnv, ctx;
 
 let gX = 0, gY = 0, pX = 0, pY = 0, gScale = 4, speed = 2;
 let mX, mY, currentLock;
+let lastPx, lastPy;
 
 let isDown = false, isDragging = false, dragTimeout = null;
 let isCoordValid = false;
@@ -21,6 +22,56 @@ let isZooming = false, zoomOffX = 0, zoomOffY = 0;
 const rectSize = gridSize * .8, lockBarSize = gridSize/2.85;
 let settingPreviewState = false;
 let mQuadrant;
+let activeLock;
+
+
+var totalPositionsToStore = 10;
+var positions = [];
+
+function storeLastPositions(xPos, yPos) {
+  // push an item
+  positions.push({
+    x: xPos,
+    y: yPos
+  });
+
+  if (positions.length > totalPositionsToStore) {
+    positions.shift();
+  }
+}
+
+
+function drawCircle(x, y, a) {
+
+  console.log(x,y,a)
+  var alpha;
+  var scale;
+
+  if (a === -1 ) {
+    // don't bother fading or scaling the trail "leader" :P
+    alpha = .7;
+    scale = 1;
+  } else {
+    // adjust the transparency and scale
+    alpha = a / 2;
+    scale = a;
+  }
+
+  ctx.beginPath();
+  ctx.arc(x, y, scale * 15 * gScale, 0, 2 * Math.PI, true);
+  ctx.fillStyle = "rgba(204, 102, 153, " + alpha + ")";
+  ctx.fill();
+}
+
+
+
+function checkBoundaries(){
+  if (gX > 0) gX = 0;
+  if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
+  if (gY > 0) gY = 0;
+  if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
+}
+
 
 
 class Canvas extends Component {
@@ -30,7 +81,8 @@ class Canvas extends Component {
     let data = {...props};
     this.state = {
       locks:data,
-      isPreviewActive: null
+      isPreviewActive: null,
+      isLockHighlighted: null
     };
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -41,7 +93,21 @@ class Canvas extends Component {
     this.isPosTaken = this.isPosTaken.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
     this.onWheel = this.onWheel.bind(this);
+    this.updateIndicator = this.updateIndicator.bind(this);
   }
+
+
+  updateIndicator() {
+    this.drawGrid();
+    for (var i = 0; i < positions.length; i++) {
+      drawCircle(positions[i].x, positions[i].y, i / positions.length);
+    }
+
+    drawCircle(mX, mY, -1);
+    storeLastPositions(mX, mY);
+    context.drawImage(canvas, 0, 0);
+  }
+
 
   isValidPos(xPos,yPos,mouseX,mouseY){
 
@@ -72,6 +138,8 @@ class Canvas extends Component {
           msg2:locks.msgs2[index],
           msg3:locks.msgs3[index],
           msg4:locks.msgs4[index],
+          xPos:locks.xPoses[index],
+          yPos:locks.yPoses[index],
           color:locks.colors[index],
           id: locks.ids[index]
         }
@@ -88,6 +156,7 @@ class Canvas extends Component {
         isPreviewActive:true
       },()=>{
         settingPreviewState = false;
+        this.drawGrid();
       })
 
     }
@@ -102,22 +171,30 @@ class Canvas extends Component {
     ctx.save();
 
     ctx.translate(gX, gY);
-    // if (isZooming) ctx.translate(pX, pY);
+    // ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * canvas.width/2, -(gScale - 1) * canvas.height/2);
     ctx.scale(gScale, gScale);
-    // if (isZooming) ctx.translate(-pX, -pY);
-
     ctx.lineJoin = "round";
-    ctx.strokeStyle = '#bbb';
     ctx.lineWidth = gridSize/10;
+    ctx.strokeStyle = '#bbb';
 
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
 
+      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] === currentLock.xPos && this.state.locks.yPoses[index] === currentLock.yPos){
+        ctx.strokeStyle = '#ffff00';
+        ctx.beginPath();
+        ctx.arc(x,y +.5, lockBarSize * 1.1, Math.PI,0, false);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.strokeStyle = '#bbb';
+      }
+
       ctx.beginPath();
       ctx.arc(x,y +.5, lockBarSize, Math.PI,0, false);
       ctx.closePath();
       ctx.stroke();
+
 
     })
 
@@ -158,11 +235,40 @@ class Canvas extends Component {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
 
+      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] === currentLock.xPos && this.state.locks.yPoses[index] === currentLock.yPos){
+        ctx.strokeStyle = '#ffff00';
+        ctx.strokeRect(x - (rectSize/2) * 1.1 , y+1  , rectSize * 1.1, rectSize * .83 * 1.05);
+        ctx.fillRect(x - (rectSize/2) * 1.1 , y+1, rectSize * 1.1, rectSize * .83 * 1.05);
+      }
+
       ctx.fillStyle = value;
       ctx.strokeStyle = value;
       ctx.strokeRect(x - (rectSize/2) , y+1  , rectSize, rectSize * .83);
       ctx.fillRect(x - (rectSize/2) , y+1 , rectSize, rectSize * .83);
     })
+
+    ctx.strokeStyle = "#707070";
+    ctx.lineWidth = gridSize * .8;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(0,gH);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(gW + gridSize, 0);
+    ctx.lineTo(gW + gridSize, gH );
+    ctx.closePath();
+    ctx.stroke();
+
+    //
+    // ctx.lineWidth = gridSize/3;
+    // ctx.beginPath();
+    // ctx.moveTo(0,0);
+    // ctx.lineTo(gW + gridSize,0);
+    // ctx.closePath();
+    // ctx.stroke();
+
     ctx.restore();
     context.drawImage(canvas, 0, 0);
   }
@@ -193,6 +299,7 @@ class Canvas extends Component {
   handleWheel(delta) {
     gScale += delta * 0.04;
     if (gScale < 1) gScale = 1;
+    checkBoundaries();
     this.drawGrid();
   }
 
@@ -202,16 +309,22 @@ class Canvas extends Component {
     isDown = true;
     pX = e.pageX;
     pY = e.pageY;
+    // lastPx = pX;
+    // lastPy = pY;
+
     isDragging = false;
     let dragTimeout = setTimeout(()=>{
+      // console.log(lastPx , pX , lastPy , pY)
+      // if (lastPx !== pX || lastPy !== pY) isDragging = true;
       isDragging = true;
-    },75)
+    },140);
   }
 
   onMouseUp(e){
     const {openForm} = this.props;
     isDown = false;
     clearTimeout(dragTimeout);
+
 
     if (!isDragging){
       const xPos = Math.round((e.nativeEvent.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
@@ -225,8 +338,11 @@ class Canvas extends Component {
   }
 
   onMouseMove(event){
-    isZooming = false; //incase wheel event still running
     let e = event.nativeEvent;
+
+    isZooming = false; //incase wheel event still running
+    mX = e.pageX;
+    mY = e.pageY;
 
     if (e.pageX < window.innerWidth/2 && e.pageY < window.innerHeight/2){
       mQuadrant = 1;
@@ -242,12 +358,10 @@ class Canvas extends Component {
 
         gX += -(pX - e.pageX) * speed;
         gY += -(pY - e.pageY) * speed;
+
         pX = e.pageX;
         pY = e.pageY;
-        if (gX > 0) gX = 0;
-        if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
-        if (gY > 0) gY = 0;
-        if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
+        checkBoundaries();
         this.drawGrid();
 
       }else{
@@ -261,33 +375,37 @@ class Canvas extends Component {
 
         ctx.clearRect(0,0,canvas.width,canvas.height); //draw validation vircle over pos
         ctx.save();
+
         ctx.translate(gX, gY);
         ctx.scale(gScale, gScale);
         ctx.lineWidth = gridSize/8;
         ctx.strokeStyle = "#ffffff";
         ctx.beginPath();
-        ctx.arc(xPos * gridSize ,yPos * gridSize, gridSize/4,0,2 * Math.PI);
+        ctx.arc(xPos * gridSize,yPos * gridSize, gridSize/4,0,2 * Math.PI);
         ctx.closePath();
         ctx.stroke();
         ctx.restore();
         context.drawImage(canvas, 0, 0);
-        document.body.className += ' ' + 'point-mouse';
+        displayCnv.className = 'point-mouse';
 
       } else if (!this.isValidPos(xPos,yPos) && isCoordValid){ //first time hovering invalid
         this.drawGrid();
         isCoordValid = false;
-        document.body.className = document.body.className.replace("point-mouse","");
+        displayCnv.className = '';
 
       }else if (!this.isPosTaken(xPos,yPos) && this.state.isPreviewActive){
 
         settingPreviewState = true;
         this.setState({
-          isPreviewActive:false
+          isPreviewActive:null,
+          isLockHighlighted: null
         },()=>{
           settingPreviewState = false;
+          currentLock = null;
         })
       }
     }
+    //this.updateIndicator();
   }
 
   onMouseOut(e){
@@ -299,26 +417,43 @@ class Canvas extends Component {
   }
 
 
-  componentWillReceiveProps(nextProps){ //2000 boxes per grid , find how many canvases per grid
+  componentWillReceiveProps(nextProps){
 
-    // (canvas.width/(gridSize * gScale))/2
     console.log('componentWillReceiveProps', this.props, this.state, nextProps)
     let data = {...nextProps};
-    const {shouldGridMove,moveX,moveY} = nextProps;
+    const {shouldGridMove,moveX,moveY,shouldZoom, zoomDirection} = nextProps;
     const didMoveGrid = (this.props.moveX == moveX && this.props.moveY == moveY);
     this.setState({
       locks:data
     },()=>{
       console.log('state on canvas props',this.state)
     });
-    console.log('gW',gW)
-    //if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
+
     if (shouldGridMove && !didMoveGrid){
-      console.log('FIX',canvas.width/(gridSize * gScale) + (canvas.width/(gridSize * gScale)/2) ,(gridSize * gScale))
-      // const cW = (gW * gScale)/(canvas.width * gScale)
-      gX = (-moveX )* ((gridSize) * gScale) + canvas.width/2;
-      gY = (-moveY )* ((gridSize) * gScale) + canvas.height/2;
+
+      this.setState({
+        isLockHighlighted: true
+      },()=>{
+        currentLock = {
+          xPos: moveX,
+          yPos: moveY
+        }
+        gScale = 10;
+        gX = (-moveX )* ((gridSize) * gScale) + canvas.width/2;
+        gY = (-moveY )* ((gridSize) * gScale) + canvas.height/2;
+
+        checkBoundaries();
+        this.drawGrid();
+      })
+
+    }else if (shouldZoom){
+      isZooming = true;
+      if (zoomDirection == 'out' && gScale > 1)gScale -= .75;
+      else if (zoomDirection == 'in') gScale += .75;
+
+      checkBoundaries();
       this.drawGrid();
+      isZooming = false;
     }
   }
 
@@ -348,9 +483,6 @@ class Canvas extends Component {
     const x = mX;
     const y = mY;
     const xy = {x:mX,y:mY};
-
-    console.log('pos', xy)
-
     return(
       <div>
         <canvas onWheel={this.onWheel} onMouseDown={this.onMouseDown} onMouseOut={this.onMouseOut} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp} id="display-canvas"></canvas>

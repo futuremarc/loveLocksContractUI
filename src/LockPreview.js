@@ -14,7 +14,6 @@ class LockPreview extends Component {
     let {x,y} = this.props.xy;
     const {currentLock, mQuadrant} = this.props;
 
-    console.log('mquad',mQuadrant)
     if (mQuadrant == 2){
       x -= 500; //width of lock
       y += 50;
@@ -37,7 +36,7 @@ class LockPreview extends Component {
     return (
       <div className="preview-lock" style={style}>
         <div className="big-lock" style={{backgroundColor:currentLock.color}}>
-          <div className="lock-body">
+          <div className="preview-lock-body">
             <div className="name-preview">{currentLock.personA}</div><span id="lovers-cross">×</span><div className="name-preview">{currentLock.personB}</div>
             <div className="msg-preview">{currentLock.msg1}{currentLock.msg2}{currentLock.msg3}{currentLock.msg4}</div>
             <div className="preview-bar"></div>
