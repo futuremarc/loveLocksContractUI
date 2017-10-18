@@ -153,17 +153,16 @@ form{
 }
 
 .animate-lock{
-  transform: rotateY(180deg);
-  top: -250px;
-  transition: transform 1s 1s, top 1s;
+  transform: rotateY(0deg) !important;
+  top: -180px !important;
 }
 
 .lock-bar {
   height: 350px; width: 320px;
   position: absolute;
-  top: -230px;
+  top: -250px;
   left: 41.5%;
-  transform: rotateY(0deg);
+  transform: rotateY(180deg);
   margin-left: -125px;
   border: 52px #bbb solid;
   border-bottom: none;
@@ -201,11 +200,9 @@ input {
   font: 18px sans-serif;
   outline: 0;
   border: none;
-  border-radius: 7px;
   background-color: hsla(0, 0%, 5%, .3);
   box-shadow: 0 0 7px hsla(0, 0%, 5%, .1) inset;
-  color: #eee;
-  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+
 }
 
 input[type=submit] {
@@ -230,7 +227,14 @@ input[type=submit]:hover {
   display:inline;
 }
 
-input::placeholder,textarea::placeholder {
+.name-input,#message, #submit-form{
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  border-radius: 7px;
+
+}
+
+.name-input::placeholder,#message::placeholder {
   color:  rgba(200,200,200,.6) !important;
   text-shadow: 1px 1px 1px rgba(0,0,0,.4);
 }
@@ -391,29 +395,35 @@ input:last-child {
 
 #search{
   position: fixed;
-  top:80px;
-  right:25px;
+  bottom:90px;
+  right:20px;
   font-size:18px;
-  width:310px;
+  width:20px;
+  transition: width 1s;
   z-index:9;
-  background: url("/search.png") left no-repeat;
+  background: url("/search-light.png") left no-repeat;
+
   background-size: 37.5px 25px;
   padding-left:43px;
-  background-color: hsla(0, 0%, 5%, .4);
-  box-shadow: 2px 2px 1px rgba(0,0,0,.3);
+  /*background-color: hsla(0, 0%, 100%, .7);*/
+  /*box-shadow: 2px 2px 1px rgba(0,0,0,.3);*/
+  /*border-bottom: 2px red solid;*/
 }
 
 #search:hover{
-  background-color: hsla(0, 0%, 20%, .4);
+  background: url("/search.png") left no-repeat;
+  background-color: rgba(255,255,255,.8);
 
+  background-size: 37.5px 25px;
+  width:210px;
 }
 
 
 #header{
   position: fixed;
-  top:20px;
-  right:30px;
-  font-size:24px;
+  top:26px;
+  right:100px;
+  font-size:26px;
   padding-bottom:7px;
   width:auto;
   display:inline;
@@ -445,53 +455,63 @@ input:last-child {
 }
 
 .zoom{
-  /*border-radius:100%;*/
-  width:60px;
-  height:60px;
-  /*background-color: hsla(0, 0%, 80%, 0);*/
-  position: fixed;
-  bottom:20px;
+  width:50%;
   opacity:.77;
-  z-index:9;
-  /*box-shadow: 2px 2px 1px rgba(0,0,0,0);*/
+  height:100%;
+  display:inline-block;
+  vertical-align: top;
+  user-select: none;
+  background: rgba(255,255,255,.8);
 }
 
 .zoom:hover{
   cursor: pointer;
-  opacity: 9;
+  background: rgba(255,255,255,1);
 }
 
-.zoom > img{
-  width:35px;
-  top:12px;
-  position: relative;
-  height:auto;
-}
-
-#zoom-in{
-  right:110px;
+#zoom-btns{
+  bottom:20px;
+  right:20px;
+  position: fixed;
+  font-size: 30px;
+  color:#888;
+  z-index:9;
+  width:120px;
+  height:50px;
 }
 #zoom-out{
-  right:180px;
-}
+  font-size: 22px;
+  padding-top:7px;
 
+}
+#zoom-out:before {
+  content : "";
+  right:20px;
+  position: relative;
+  height  : 1px;
+  width   : 50%;
+  border-left: 1px rgba(100,100,100,.6) solid;
+}
 #about-btn{
-  width:60px;
-  height:60px;
+  border-radius:100%;
+  background-color: hsla(0, 0%, 100%, .8);
+  box-shadow: 2px 2px 1px rgba(0,0,0,.3);
+  width:55px;
+  height:55px;
   padding-top:2px;
   position: fixed;
-  bottom:20px;
-  opacity:.77;
+  user-select: none;
+  top:16px;
   z-index:9;
-  right:40px;
-  font-size: 40px;
+  right:20px;
+  font-size: 36px;
   font-weight: 500;
-  color:white;
+  color:#888;
 }
 
 #about-btn:hover{
   cursor: pointer;
-  opacity: 9;
+  background-color: hsla(0, 0%, 100%, .9);
 }
 
 

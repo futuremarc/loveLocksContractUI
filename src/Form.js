@@ -58,24 +58,28 @@ class Form extends Component {
         alert('Please fill all the fields.');
         return
       }
-
       miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((data,err)=>{
         console.log(data,err);
         btn.val('Engraving... (mining block)')
 
-        window.web3.eth.filter('latest', function(error, result){
-          if (!error) {
-            console.log('block result',result)
-            btn.val('Congrats!')
+        let filter = window.web3.eth.filter('latest');
+        filter.watch((err, result)=>{
+          if (!err) {
+            console.log('block result',result);
+            btn.val('Congrats!');
+            $('#submit-form').attr('disabled',true);
             $('#reciept').html('reciept: ' + result);
-
+            $('.lock-bar')[0].className += ' animate-lock';
+            filter.stopWatching();
             getLocks();
 
           } else {
-            console.error(error)
-            btn.val('Sorry, something went wrong.')
+            console.error(err);
+            btn.val('Sorry, something went wrong.');
           }
-        });
+        })
+
+
       })
   }
 
@@ -96,7 +100,6 @@ class Form extends Component {
     window.stopAnimGrass();
     $('#stars div').removeClass('star-anim');
     btn = $('#submit-form');
-    // document.body.className = document.body.className.replace("point-mouse","");
   }
 
   componentWillUnmount(){

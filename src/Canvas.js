@@ -428,7 +428,7 @@ class Canvas extends Component {
     this.setState({
       locks:data
     },()=>{
-      console.log('state on canvas props',this.state)
+      setTimeout(this.drawGrid,500);
     });
 
     if (shouldGridMove && !didMoveGrid){
@@ -450,8 +450,8 @@ class Canvas extends Component {
 
     }else if (shouldZoom){
       isZooming = true;
-      if (zoomDirection == 'out' && gScale > 1)gScale -= .75;
-      else if (zoomDirection == 'in') gScale += .75;
+      if (zoomDirection == 'zoom-out' && gScale > 1)gScale -= .75;
+      else if (zoomDirection == 'zoom-in') gScale += .75;
 
       checkBoundaries();
       this.drawGrid();
