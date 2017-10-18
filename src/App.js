@@ -49,6 +49,7 @@ let web3 = window.web3 || null;
       }
 
       this.initContract = this.initContract.bind(this);
+      this.getLocks = this.getLocks.bind(this);
       this.openForm = this.openForm.bind(this);
       this.closeForm = this.closeForm.bind(this);
       this.moveGrid = this.moveGrid.bind(this);
@@ -82,11 +83,7 @@ let web3 = window.web3 || null;
       this.setState({isFormActive: null});
     }
 
-
-    initContract (contract) {
-
-      MiniToken = contract(abi);
-      miniToken = MiniToken.at(address);
+    getLocks(){
 
       miniToken.getLoveLocks().then((data)=>{
         let colors = String(data[0]).split(',');
@@ -145,6 +142,14 @@ let web3 = window.web3 || null;
 
       });
 
+    }
+
+
+    initContract (contract) {
+
+      MiniToken = contract(abi);
+      miniToken = MiniToken.at(address);
+      this.getLocks();
     }
 
     moveGrid(x,y){
@@ -212,7 +217,7 @@ let web3 = window.web3 || null;
       return (
         <div className="App">
           { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
-          { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
+          { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} getLocks={this.getLocks} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
 
           <div id="header"><img src="/logo-white.png"></img></div>

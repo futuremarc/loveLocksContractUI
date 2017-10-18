@@ -8,6 +8,7 @@ body {
   position: relative;
   height: 100vh;
   overflow: hidden;
+  font-family: sans-serif;
   background-color: #051729;
   background-image: radial-gradient(
     circle at 50% 120%,
@@ -53,6 +54,11 @@ body {
   }
 }
 
+#reciept{
+  font-size:10px;
+  color:white;
+  text-align: center;
+}
 .about-body{
   font-size:18px;
   padding-left:25px;
@@ -107,6 +113,9 @@ body {
   cursor: pointer !important;
 }
 
+.default-mouse{
+  cursor: default !important;
+}
 
 form{
   min-width: 450px;

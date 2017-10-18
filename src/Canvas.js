@@ -155,6 +155,7 @@ class Canvas extends Component {
       this.setState({
         isPreviewActive:true
       },()=>{
+        displayCnv.className = 'default-mouse';
         settingPreviewState = false;
         this.drawGrid();
       })
@@ -400,6 +401,7 @@ class Canvas extends Component {
           isPreviewActive:null,
           isLockHighlighted: null
         },()=>{
+          displayCnv.className = '';
           settingPreviewState = false;
           currentLock = null;
         })

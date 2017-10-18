@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import Portal from 'react-minimalist-portal';
 import ColorPicker  from './ColorPicker';
+let btn;
 
 
 class Form extends Component {
@@ -24,7 +25,7 @@ class Form extends Component {
   onSubmit(e){
     console.log('onSubmit', this.props)
 
-    let {miniToken} = this.props;
+    let {miniToken, getLocks} = this.props;
 
     e.preventDefault();
     let message = $('#message').val();
@@ -60,6 +61,21 @@ class Form extends Component {
 
       miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((data,err)=>{
         console.log(data,err);
+        btn.val('Engraving... (mining block)')
+
+        window.web3.eth.filter('latest', function(error, result){
+          if (!error) {
+            console.log('block result',result)
+            btn.val('Congrats!')
+            $('#reciept').html('reciept: ' + result);
+
+            getLocks();
+
+          } else {
+            console.error(error)
+            btn.val('Sorry, something went wrong.')
+          }
+        });
       })
   }
 
@@ -72,10 +88,15 @@ class Form extends Component {
   componentWillMount(){
   }
 
+  shouldComponentUpdate(nextProps) {
+    return (this.props.messages !== nextProps.messages);
+  }
+
   componentDidMount(){
     window.stopAnimGrass();
     $('#stars div').removeClass('star-anim');
-    document.body.className = document.body.className.replace("point-mouse","");
+    btn = $('#submit-form');
+    // document.body.className = document.body.className.replace("point-mouse","");
   }
 
   componentWillUnmount(){
@@ -105,7 +126,8 @@ class Form extends Component {
                 <div className="lock-bar">
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
-                <input type="submit" onClick={this.onSubmit} value="Engrave"/>
+                <input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/>
+                <div id="reciept"></div>
               </div>
             </form>
         </div>
