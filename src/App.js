@@ -226,7 +226,7 @@ let web3 = window.web3 || null;
             <div onMouseDown={this.zoom}className="zoom" id="zoom-in">+</div>
             <div onMouseDown={this.zoom}className="zoom" id="zoom-out">—</div>
           </div>
-          <div onMouseDown={this.openAbout} id="about-btn">?</div>
+          <div onMouseDown={this.openAbout} id="about-btn">ℹ</div>
 
         </div>
       );

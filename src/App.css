@@ -121,35 +121,18 @@ form{
   min-width: 450px;
   max-width:650px;
   min-height:350px;
+  padding: 25px;
+  margin-top:4%;
 
 }
 
-.big-lock {
+.lock {
 
-  padding: 25px;
-  margin-top:4%;
   background-color: #bf4040;
   position: absolute;
   transition: top 1s;
   border-radius: 7%;
-  box-shadow: 0 5px 7px 1px rgba(0,0,0,.5);
-
-
-}
-
-.preview-lock{
-  position:fixed;
-  z-index: 100;
-}
-
-.preview-lock-body{
-  min-width: 300px;
-  max-width: 400px;
-  max-height:200px;
-}
-
-.lock-coords{
-  color:#000;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.3);
 }
 
 .animate-lock{
@@ -176,13 +159,13 @@ form{
 
 
 .preview-bar {
-  height: 275px; width: 300px;
+  height: 275px; width: 215px;
   position: absolute;
-  top: -150px;
-  left: 41.5%;
+  top: -100px;
+  left: 56%;
   transform: rotateY(0deg);
   margin-left: -125px;
-  border: 42px #bbb solid;
+  border: 32px #bbb solid;
   border-bottom: none;
   border-radius: 150px;
   border-bottom-left-radius: 0;
@@ -190,9 +173,54 @@ form{
   z-index: -1;
   transition: transform 1s, top 1s 1s;
   transform-origin: 10% 50%;
-  box-shadow: 0 0 10px 6px rgba(0,0,0,.5);
+}
+
+.preview-lock{
+  position:fixed;
+  z-index: 100;
 
 }
+
+.preview-lock-body{
+  width: 100%;
+  margin-top:4%;
+  width:250px;
+  height:200px;
+}
+
+
+.name-preview {
+  width:47.2%;
+  display:inline;
+  font: 20px sans-serif;
+  text-align: center;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  overflow-wrap: break-word;
+}
+
+.msg-preview-container{
+  padding:15px;
+}
+.msg-preview {
+  height: auto;
+  width: 100%;
+  display: block;
+  margin: auto;
+  margin-bottom: 20px;
+  margin-top: 0px;
+  font: 14px sans-serif;
+  text-align: center;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  padding:15px;
+  overflow-wrap: break-word;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 0%, .1);
+  box-shadow: 0 0 7px hsla(0, 0%, 0%, .0) inset;
+
+}
+
 
 input {
   height: 50px;
@@ -202,14 +230,13 @@ input {
   border: none;
   background-color: hsla(0, 0%, 5%, .3);
   box-shadow: 0 0 7px hsla(0, 0%, 5%, .1) inset;
-
 }
 
 input[type=submit] {
   cursor: pointer;
   width: 75%;
   background-color: hsla(0, 0%, 5%, .7);
-  margin: 14px auto;
+  margin: 34px auto 10px auto;
 }
 
 input[type=submit]:hover {
@@ -218,7 +245,8 @@ input[type=submit]:hover {
 
 #lovers-cross{
   padding:7px;
-  color:#fff;
+  color:#ff0000;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
 }
 
 .name-input{
@@ -259,38 +287,6 @@ textarea {
   resize:none;
 }
 
-
-.name-preview {
-  width:47.2%;
-  display:inline;
-  margin: 14px auto;
-  font: 30px sans-serif;
-  text-align: center;
-  color: #eee;
-  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
-  overflow-wrap: break-word;
-}
-
-
-
-.msg-preview {
-  height: auto;
-  width: 100%;
-  display: block;
-  margin: auto;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  font: 20px sans-serif;
-  text-align: center;
-  color: #eee;
-  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
-  padding:15px;
-  overflow-wrap: break-word;
-  border-radius: 7px;
-  background-color: hsla(0, 0%, 0%, .1);
-  box-shadow: 0 0 7px hsla(0, 0%, 0%, .0) inset;
-
-}
 
 input:last-child {
   margin-top:40px;
@@ -412,7 +408,7 @@ input:last-child {
 
 #search:hover{
   background: url("/search.png") left no-repeat;
-  background-color: rgba(255,255,255,.8);
+  background-color: rgba(255,255,255,.7);
 
   background-size: 37.5px 25px;
   width:210px;
@@ -421,8 +417,8 @@ input:last-child {
 
 #header{
   position: fixed;
-  top:26px;
-  right:100px;
+  top:20px;
+  right:82px;
   font-size:26px;
   padding-bottom:7px;
   width:auto;
@@ -430,6 +426,7 @@ input:last-child {
   z-index:9;
   color:#fff;
   opacity:.8;
+
 }
 
 #header > img{
@@ -450,7 +447,6 @@ input:last-child {
   display:block;
   margin:auto;
   padding-bottom:10px;
-  top:-20px;
   position: relative;
 }
 
@@ -490,28 +486,28 @@ input:last-child {
   position: relative;
   height  : 1px;
   width   : 50%;
-  border-left: 1px rgba(100,100,100,.6) solid;
+  border-left: 1px rgba(100,100,100,.7) solid;
 }
 #about-btn{
   border-radius:100%;
-  background-color: hsla(0, 0%, 100%, .8);
-  box-shadow: 2px 2px 1px rgba(0,0,0,.3);
-  width:55px;
-  height:55px;
-  padding-top:2px;
+  border: 3px rgba(255,255,255,.7) solid;
+  width:30px;
+  height:30px;
+  line-height: 20px;
   position: fixed;
   user-select: none;
-  top:16px;
+  top:24px;
   z-index:9;
   right:20px;
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 500;
-  color:#888;
+  color:rgba(255,255,255,.6);
 }
 
 #about-btn:hover{
   cursor: pointer;
-  background-color: hsla(0, 0%, 100%, .9);
+  border: 3px rgba(255,255,255,.8) solid;
+  color:rgba(255,255,255,87);
 }
 
 

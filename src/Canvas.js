@@ -170,9 +170,10 @@ class Canvas extends Component {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     context.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-
+    console.log(gX, gY)
     ctx.translate(gX, gY);
-    // ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * canvas.width/2, -(gScale - 1) * canvas.height/2);
+    //if (isZooming)ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * -gX + (canvas.width/2), -(gScale - 1) * -gY + (canvas.height/2));
+    // else ctx.scale(gScale, gScale);
     ctx.scale(gScale, gScale);
     ctx.lineJoin = "round";
     ctx.lineWidth = gridSize/10;
@@ -428,7 +429,7 @@ class Canvas extends Component {
     this.setState({
       locks:data
     },()=>{
-      setTimeout(this.drawGrid,500);
+      this.drawGrid()
     });
 
     if (shouldGridMove && !didMoveGrid){

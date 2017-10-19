@@ -120,7 +120,7 @@ class Form extends Component {
     return(
       <Portal>
         <div key="overlay" className="modal-overlay">
-            <form style={{background:"#bf4040"}} className="big-lock">
+            <form style={{background:"#bf4040"}} className="lock">
               <div>
               <a href="#" onClick={this.onCloseClick} id="close-form"><span>×</span></a>
               <div style={{display:'none'}}><span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span></div>
