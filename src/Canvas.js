@@ -20,9 +20,11 @@ let isDown = false, isDragging = false, dragTimeout = null;
 let isCoordValid = false;
 let isZooming = false, zoomOffX = 0, zoomOffY = 0;
 const rectSize = gridSize * .8, lockBarSize = gridSize/2.85;
+const lockSize = (rectSize/gridSize);
 let settingPreviewState = false;
 let mQuadrant;
 let activeLock;
+let xPosPrev, yPosPrev;
 
 
 var totalPositionsToStore = 10;
@@ -172,7 +174,7 @@ class Canvas extends Component {
     ctx.save();
     console.log(gX, gY)
     ctx.translate(gX, gY);
-    //if (isZooming)ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * -gX + (canvas.width/2), -(gScale - 1) * -gY + (canvas.height/2));
+    // if (isZooming) ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * (canvas.width/2), -(gScale - 1) * (canvas.height/2));
     // else ctx.scale(gScale, gScale);
     ctx.scale(gScale, gScale);
     ctx.lineJoin = "round";
@@ -369,12 +371,13 @@ class Canvas extends Component {
       }else{
 
       const xPos = Math.round((e.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
-      const yPos = Math.ceil((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
+      const yPos = Math.round((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
+      const yPosReal = (e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale;
 
-      if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid){ //first time hovering valid
+      if ((this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid) || (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos !== xPosPrev && yPos !== yPosPrev)){ //first time hovering valid
 
         isCoordValid = true;
-
+        if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos !== xPosPrev && yPos !== yPosPrev) this.drawGrid(); //reset if last pos was valid
         ctx.clearRect(0,0,canvas.width,canvas.height); //draw validation vircle over pos
         ctx.save();
 
@@ -397,6 +400,7 @@ class Canvas extends Component {
 
       }else if (!this.isPosTaken(xPos,yPos) && this.state.isPreviewActive){
 
+        if (yPosReal <= parseInt(currentLock.yPos) + lockSize && yPosReal >=  currentLock.yPos)  return //make
         settingPreviewState = true;
         this.setState({
           isPreviewActive:null,
@@ -407,6 +411,9 @@ class Canvas extends Component {
           currentLock = null;
         })
       }
+
+      yPosPrev = yPos;
+      xPosPrev = xPos;
     }
     //this.updateIndicator();
   }
