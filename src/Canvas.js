@@ -369,7 +369,7 @@ class Canvas extends Component {
       }else{
 
       const xPos = Math.round((e.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
-      const yPos = Math.round((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
+      const yPos = Math.ceil((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
 
       if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid){ //first time hovering valid
 

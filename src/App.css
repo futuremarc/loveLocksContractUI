@@ -324,7 +324,7 @@ input:last-child {
   border-radius:7px;
   position: relative;
   margin:0 auto;
-  padding: 0;
+  padding: 10em;
   display: block;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
@@ -332,15 +332,6 @@ input:last-child {
 }
 
 @media (min-width: 60em) {
-  .modal{
-    height: auto;
-    margin: 7% auto;
-    max-height: 56em;
-    min-height: 38em;
-    max-width: 95%;
-    width: 65%;
-    padding: 4em;
-  }
   .about-modal{
     height: auto;
     margin: 7% auto;
@@ -348,7 +339,7 @@ input:last-child {
     min-height: 38em;
     max-width: 95%;
     width: 45%;
-    padding: 4em;
+    padding: 3em;
   }
 }
 
@@ -409,7 +400,6 @@ input:last-child {
 #search:hover{
   background: url("/search.png") left no-repeat;
   background-color: rgba(255,255,255,.7);
-
   background-size: 37.5px 25px;
   width:210px;
 }
@@ -426,7 +416,6 @@ input:last-child {
   z-index:9;
   color:#fff;
   opacity:.8;
-
 }
 
 #header > img{
