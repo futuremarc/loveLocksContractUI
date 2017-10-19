@@ -27,8 +27,9 @@ class About extends Component {
         <div className="about-overlay">
             <div className="about-modal">
               <a href="#" onClick={this.onCloseClick} id="close-about"><span>×</span></a>
-              <div id="about-header"><img src="/logo-black.png"></img></div>
-              <div className="about-body"><div className="web3-msg">Hello! This is a web3 decentralized application, or "dApp", please use the <a target="_blank" src="http://metamask.io">Meta Mask</a> Chrome extension or a web3 enabled browser!</div> <br/><br/> <a href="https://en.wikipedia.org/wiki/Love_lock" target="_blank">Love locks</a> are a popular and powerful way to signify an unbreakable love and capture it forever. Unfortunately, the most popular sites around the world get their love locks taken down all the time due to hazards or other miscellaneous reasons. <br/><br/> Crypto Love Locks takes the love lock and puts it on the <a href="https://en.wikipedia.org/wiki/Ethereum" target="_blank">Ethereum blockchain</a> so they can never be taken down again.<br/><br/>Choose a spot, engrave your message and let your memory live on forever.</div>
+              <div id="about-header">crypto<span style={{color:'red'}}>x</span>lovelocks</div>
+              <div className="web3-msg">Hello! This is a web3 decentralized application, or "dApp", please use the <a target="_blank" href="http://metamask.io">Meta Mask</a> Chrome extension or a web3 enabled browser!</div>
+              <div className="about-body"> <a href="https://en.wikipedia.org/wiki/Love_lock" target="_blank">Love locks</a> are a popular and powerful way to signify an unbreakable love and capture it forever. Unfortunately, the most popular sites around the world get their love locks taken down all the time due to hazards or other miscellaneous reasons. <br/><br/> <b>crypto<span style={{color:'red'}}>x</span>lovelocks</b> takes the love lock and puts it on the <a href="https://en.wikipedia.org/wiki/Ethereum" target="_blank">Ethereum blockchain</a> so they can never be taken down again.<br/><br/><span className="instructions">1. Choose a spot. <br/> 2. Engrave your message. <br/>3. Let your memory live on forever.</span></div>
             </div>
         </div>
       </Portal>

@@ -61,14 +61,14 @@ body {
 }
 .about-body{
   font-size:18px;
-  padding-left:25px;
-  padding-right:25px;
+  padding:15px 20px;
 }
+
 
 .about-body > a{
   color:blue;
 }
-.about-body > a, .about-body > div > a{
+.about-body > a, .web3-msg > a{
   color:blue;
 }
 
@@ -86,9 +86,12 @@ body {
 .web3-msg{
   font-size:16px;
   font-style: italic;
-  display:inline-block;
-  padding-left:15px;
-  padding-right:15px;
+  display:block;
+  padding:15px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 5%, .1);
+  box-shadow: 0 0 7px hsla(0, 0%, 5%, .1) inset;
 }
 
 
@@ -133,6 +136,7 @@ form{
   transition: top 1s;
   border-radius: 7%;
   box-shadow: 1px 1px 0px rgba(0,0,0,.1);
+  user-select: none;
 }
 
 .animate-lock{
@@ -199,8 +203,36 @@ form{
   overflow-wrap: break-word;
 }
 
+.name-preview-big {
+  width:100%;
+  display:block;
+  font: 14px sans-serif;
+  text-align: center;
+  color: #eee;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  overflow-wrap: break-word;
+}
+
+
+.lovers-cross{
+  padding:7px;
+  color:#ff0000;
+  display: inline-block;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+
+.lovers-cross-big{
+  padding:0px;
+  width:100%;
+  text-align: center;
+  display: block;
+  color:#ff0000;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+
 .msg-preview-container{
   padding:15px;
+  margin-top:10px;
 }
 .msg-preview {
   height: auto;
@@ -243,11 +275,6 @@ input[type=submit]:hover {
   box-shadow: 0 0 15px hsla(0, 0%, 100%, 1);
 }
 
-#lovers-cross{
-  padding:7px;
-  color:#ff0000;
-  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
-}
 
 .name-input{
   text-align: center;
@@ -323,23 +350,23 @@ input:last-child {
   color:black;
   border-radius:7px;
   position: relative;
-  margin:0 auto;
-  padding: 10em;
+  /*margin:0 auto;
+  padding: 10em;*/
   display: block;
-  overflow-y: scroll;
+  /*overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  height: 100%;
+  height: 100%;*/
+  height: auto;
+  margin: 7% auto;
+  max-height: 56em;
+  min-height: 38em;
+  width:500px;
+  padding: 3em;
 }
 
 @media (min-width: 60em) {
   .about-modal{
-    height: auto;
-    margin: 7% auto;
-    max-height: 56em;
-    min-height: 38em;
-    max-width: 95%;
-    width: 45%;
-    padding: 3em;
+
   }
 }
 
@@ -426,7 +453,9 @@ input:last-child {
 
 #about-header{
   font-size:24px;
-  padding-bottom:7px;
+  padding-bottom:15px;
+  text-align: center;
+
   z-index:9;
 }
 

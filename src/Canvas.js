@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import LockPreview from './LockPreview';
 import _ from 'lodash';
-let web3 = window.web3 || null
+import page from 'page';
 
+let web3 = window.web3 || null;
 let cols = 200;
 let rows = 150;
 let cells = rows * cols;
@@ -13,7 +14,7 @@ let canvas, context;
 let displayCnv, ctx;
 
 let gX = 0, gY = 0, pX = 0, pY = 0, gScale = 4, speed = 2;
-let mX, mY, currentLock;
+let mX, mY, currentLock = {xPos:null, yPos:null};
 let lastPx, lastPy;
 
 let isDown = false, isDragging = false, dragTimeout = null;
@@ -26,55 +27,12 @@ let mQuadrant;
 let activeLock;
 let xPosPrev, yPosPrev;
 
-
-var totalPositionsToStore = 10;
-var positions = [];
-
-function storeLastPositions(xPos, yPos) {
-  // push an item
-  positions.push({
-    x: xPos,
-    y: yPos
-  });
-
-  if (positions.length > totalPositionsToStore) {
-    positions.shift();
-  }
-}
-
-
-function drawCircle(x, y, a) {
-
-  console.log(x,y,a)
-  var alpha;
-  var scale;
-
-  if (a === -1 ) {
-    // don't bother fading or scaling the trail "leader" :P
-    alpha = .7;
-    scale = 1;
-  } else {
-    // adjust the transparency and scale
-    alpha = a / 2;
-    scale = a;
-  }
-
-  ctx.beginPath();
-  ctx.arc(x, y, scale * 15 * gScale, 0, 2 * Math.PI, true);
-  ctx.fillStyle = "rgba(204, 102, 153, " + alpha + ")";
-  ctx.fill();
-}
-
-
-
 function checkBoundaries(){
   if (gX > 0) gX = 0;
   if (gX < canvas.width - gW * gScale) gX = canvas.width - gW * gScale;
   if (gY > 0) gY = 0;
   if (gY < canvas.height - gH * gScale) gY = canvas.height - gH * gScale;
 }
-
-
 
 class Canvas extends Component {
 
@@ -84,30 +42,19 @@ class Canvas extends Component {
     this.state = {
       locks:data,
       isPreviewActive: null,
-      isLockHighlighted: null
+      isLockHighlighted: null,
+      hasRouted: null
     };
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
+    this.focusLock = this.focusLock.bind(this);
     this.isValidPos = this.isValidPos.bind(this);
     this.isPosTaken = this.isPosTaken.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
     this.onWheel = this.onWheel.bind(this);
-    this.updateIndicator = this.updateIndicator.bind(this);
-  }
-
-
-  updateIndicator() {
-    this.drawGrid();
-    for (var i = 0; i < positions.length; i++) {
-      drawCircle(positions[i].x, positions[i].y, i / positions.length);
-    }
-
-    drawCircle(mX, mY, -1);
-    storeLastPositions(mX, mY);
-    context.drawImage(canvas, 0, 0);
   }
 
 
@@ -122,6 +69,25 @@ class Canvas extends Component {
     else{
       return false;
     }
+  }
+
+  focusLock(moveX,moveY){
+
+    this.setState({
+      isLockHighlighted: true
+    },()=>{
+      currentLock = {
+        xPos: moveX,
+        yPos: moveY
+      }
+      gScale = 10;
+      gX = (-moveX )* ((gridSize) * gScale) + canvas.width/2;
+      gY = (-moveY )* ((gridSize) * gScale) + canvas.height/2;
+
+      checkBoundaries();
+      this.drawGrid();
+    })
+
   }
 
   isPosTaken(xPos,yPos,mouseX,mouseY){
@@ -172,7 +138,6 @@ class Canvas extends Component {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     context.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    console.log(gX, gY)
     ctx.translate(gX, gY);
     // if (isZooming) ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * (canvas.width/2), -(gScale - 1) * (canvas.height/2));
     // else ctx.scale(gScale, gScale);
@@ -184,7 +149,6 @@ class Canvas extends Component {
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
-
       if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] === currentLock.xPos && this.state.locks.yPoses[index] === currentLock.yPos){
         ctx.strokeStyle = '#ffff00';
         ctx.beginPath();
@@ -321,7 +285,12 @@ class Canvas extends Component {
       // console.log(lastPx , pX , lastPy , pY)
       // if (lastPx !== pX || lastPy !== pY) isDragging = true;
       isDragging = true;
-    },140);
+      if (this.state.isPreviewActive){
+      this.setState({
+        isPreviewActive:null
+      })
+    }
+  },100);
   }
 
   onMouseUp(e){
@@ -333,10 +302,7 @@ class Canvas extends Component {
     if (!isDragging){
       const xPos = Math.round((e.nativeEvent.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
       const yPos = Math.round((e.nativeEvent.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
-
       if (this.isValidPos(xPos,yPos)) openForm(xPos,yPos);
-      else console.log('not valid position')
-
     }
     isDragging = false;
   }
@@ -408,14 +374,16 @@ class Canvas extends Component {
         },()=>{
           displayCnv.className = '';
           settingPreviewState = false;
-          currentLock = null;
+          currentLock = {
+            xPos:null,
+            yPos:null
+          };
         })
       }
 
       yPosPrev = yPos;
       xPosPrev = xPos;
     }
-    //this.updateIndicator();
   }
 
   onMouseOut(e){
@@ -426,48 +394,52 @@ class Canvas extends Component {
     console.log('componentWillMount', this.props, this.state);
   }
 
-
   componentWillReceiveProps(nextProps){
 
     console.log('componentWillReceiveProps', this.props, this.state, nextProps)
     let data = {...nextProps};
     const {shouldGridMove,moveX,moveY,shouldZoom, zoomDirection} = nextProps;
     const didMoveGrid = (this.props.moveX == moveX && this.props.moveY == moveY);
+
     this.setState({
       locks:data
     },()=>{
-      this.drawGrid()
-    });
-
-    if (shouldGridMove && !didMoveGrid){
-
-      this.setState({
-        isLockHighlighted: true
-      },()=>{
+      if (shouldGridMove && !didMoveGrid){
         currentLock = {
           xPos: moveX,
           yPos: moveY
         }
-        gScale = 10;
-        gX = (-moveX )* ((gridSize) * gScale) + canvas.width/2;
-        gY = (-moveY )* ((gridSize) * gScale) + canvas.height/2;
-
-        checkBoundaries();
-        this.drawGrid();
-      })
-
-    }else if (shouldZoom){
-      isZooming = true;
-      if (zoomDirection == 'zoom-out' && gScale > 1)gScale -= .75;
-      else if (zoomDirection == 'zoom-in') gScale += .75;
+        this.focusLock(moveX,moveY);
+      } else if (shouldZoom){
+          isZooming = true;
+          if (zoomDirection == 'zoom-out' && gScale > 1)gScale -= .75;
+          else if (zoomDirection == 'zoom-in') gScale += .75;
+          isZooming = false;
+        }
 
       checkBoundaries();
-      this.drawGrid();
-      isZooming = false;
-    }
+      this.drawGrid()
+    });
+
   }
 
   componentDidMount(){
+    //initialize routing
+    var self = this;
+     page('/:id', function(ctx, next){
+       if (self.state.hasRouted) return
+
+       let search = document.getElementById('search');
+       var event = new Event('input', { bubbles: true});
+        event.simulated = true;
+        search.value = ctx.params.id;
+        search.dispatchEvent(event);
+        search.value = '';
+        self.setState({
+          hasRouted: true
+        })
+     });
+     page();
 
     displayCnv = document.getElementById('display-canvas'); //onscreen canvas
     canvas = document.getElementById('render-canvas'); //offscreen rendering canvas

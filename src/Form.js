@@ -124,7 +124,7 @@ class Form extends Component {
               <div>
               <a href="#" onClick={this.onCloseClick} id="close-form"><span>×</span></a>
               <div style={{display:'none'}}><span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span></div>
-              <input type="text" placeholder="You" id="personA" className="name-input" maxLength="32"></input><span id="lovers-cross">×</span><input type="text" placeholder="Your love" id="personB" className="name-input" maxLength="32"></input>
+              <input type="text" placeholder="You" id="personA" className="name-input" maxLength="32"></input><div className="lovers-cross">×</div><input type="text" placeholder="Your love" id="personB" className="name-input" maxLength="32"></input>
               <textarea placeholder="Enter a memory or a message" id="message" maxLength="128"></textarea>
                 <div className="lock-bar">
                 </div>

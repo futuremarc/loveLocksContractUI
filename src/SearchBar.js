@@ -22,11 +22,11 @@ class SearchBar extends Component {
 
   onChange() {
     const {ids, xPoses, yPoses, moveGrid} = this.props;
-    const id =  input.value;
+    const id =  input.value.toLowerCase();
     _.map(ids, (value, index) => {
 
         console.log(value, id, value == id)
-        if (value == id ){
+        if (value == id){
           console.log('move canvas', xPoses[index], yPoses[index]);
           moveGrid(xPoses[index], yPoses[index]);
         }

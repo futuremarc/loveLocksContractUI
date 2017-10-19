@@ -155,6 +155,7 @@ let web3 = window.web3 || null;
     moveGrid(x,y){
       this.setState({
         shouldGridMove:true,
+        isAboutActive:null,
         moveX:x,
         moveY:y
       },()=>{
