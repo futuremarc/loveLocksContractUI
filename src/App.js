@@ -14,6 +14,8 @@ const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"
 const address = '0x4a21a48052721b746be58592522a29743e03de2a';
 let MiniToken, miniToken;
 
+
+
 function retryWeb3Provider(){
   let eth, contract;
 
@@ -35,12 +37,6 @@ let web3 = window.web3 || null;
     constructor(props) {
       super(props)
       this.state = {
-        colors:[],
-        personsA: [],
-        personsB: [],
-        messages: [],
-        xPoses: [],
-        yPoses: [],
         isFormActive: null,
         isCanvasReady:null,
         isAboutActive:true,
@@ -85,22 +81,15 @@ let web3 = window.web3 || null;
 
     getLocks(){
 
-      miniToken.getLoveLocks().then((data)=>{
-        let colors = String(data[0]).split(',');
-        let personsA = String(data[1]).split(',');
-        let personsB = String(data[2]).split(',');
-        let xPoses = String(data[3]).split(',');
-        let yPoses = String(data[4]).split(',');
-        let ids = String(data[5]).split(',');
+      let getMain = new Promise((resolve, reject)=>{
 
-        console.log(miniToken)
-
-        miniToken.getLoveLockMsgs().then((data)=>{
-
-          let msgs1 = String(data[0]).split(',');
-          let msgs2 = String(data[1]).split(',');
-          let msgs3 = String(data[2]).split(',');
-          let msgs4 = String(data[3]).split(',');
+        miniToken.getLoveLocks().then((data)=>{
+          let colors = String(data[0]).split(',');
+          let personsA = String(data[1]).split(',');
+          let personsB = String(data[2]).split(',');
+          let xPoses = String(data[3]).split(',');
+          let yPoses = String(data[4]).split(',');
+          let ids = String(data[5]).split(',');
 
           colors.map((item,index)=>{
             let str = web3.toAscii(item);
@@ -112,6 +101,21 @@ let web3 = window.web3 || null;
           personsB.map((item,index)=>{
             personsB[index] = web3.toAscii(item);
           })
+
+          let locks = {colors,personsA,personsB, xPoses, yPoses,ids}
+          resolve(locks);
+
+        });
+      })
+
+      let getMsgs = new Promise((resolve, reject)=>{
+
+        miniToken.getLoveLockMsgs().then((data)=>{
+          let msgs1 = String(data[0]).split(',');
+          let msgs2 = String(data[1]).split(',');
+          let msgs3 = String(data[2]).split(',');
+          let msgs4 = String(data[3]).split(',');
+
           msgs1.map((item,index)=>{
             msgs1[index] = web3.toAscii(item);
           })
@@ -125,23 +129,26 @@ let web3 = window.web3 || null;
             msgs4[index] = web3.toAscii(item);
           })
 
-          this.setState({
-            ids: ids,
-            colors: colors,
-            personsA: personsA,
-            personsB: personsB,
-            xPoses: xPoses,
-            yPoses: yPoses,
-            msgs1: msgs1,
-            msgs2: msgs2,
-            msgs3: msgs3,
-            msgs4: msgs4,
-            isCanvasReady: true
-          })
+          let msgs = {msgs1,msgs2,msgs3,msgs4};
+          resolve(msgs);
         });
-
       });
 
+      Promise.all([getMain, getMsgs]).then(vals => {
+        this.setState({
+          ids: vals[0].ids,
+          colors: vals[0].colors,
+          personsA: vals[0].personsA,
+          personsB: vals[0].personsB,
+          xPoses: vals[0].xPoses,
+          yPoses: vals[0].yPoses,
+          msgs1: vals[1].msgs1,
+          msgs2: vals[1].msgs2,
+          msgs3: vals[1].msgs3,
+          msgs4: vals[1].msgs4,
+          isCanvasReady: true
+        })
+      });
     }
 
 
@@ -179,7 +186,7 @@ let web3 = window.web3 || null;
         this.initContract(contract);
 
         } else {
-            setTimeout(retryWeb3Provider,700);
+            setTimeout(retryWeb3Provider,500);
           }
 
        } else {
@@ -220,7 +227,7 @@ let web3 = window.web3 || null;
           { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
           { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} getLocks={this.getLocks} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
-          <div id="header">crypto<span style={{color:'red'}}>x</span>lovelocks</div>
+          <div id="header"><img src="/logo-white.png"></img></div>
 
           <SearchBar moveX={moveX} moveY={moveY} moveGrid={this.moveGrid} xPoses={xPoses} yPoses= {yPoses} ids={ids}/>
           <div id="zoom-btns">
@@ -233,7 +240,5 @@ let web3 = window.web3 || null;
       );
     }
   }
-  // <div id="header"><img src="/logo-white.png"></img></div>
-
 
   export default App;

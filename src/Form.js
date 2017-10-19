@@ -17,6 +17,7 @@ class Form extends Component {
   }
 
   onCloseClick(e){
+    e.preventDefault();
     console.log('close form');
     const {closeForm} = this.props;
     closeForm();
@@ -24,10 +25,10 @@ class Form extends Component {
 
   onSubmit(e){
     console.log('onSubmit', this.props)
-
+    e.preventDefault();
     let {miniToken, getLocks} = this.props;
 
-    e.preventDefault();
+
     let message = $('#message').val();
     var splitMsg = [];
 
@@ -60,15 +61,16 @@ class Form extends Component {
       }
       miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((data,err)=>{
         console.log(data,err);
-        btn.val('Engraving... (mining block)')
+        btn.val('Engraving... (mining block)');
+        btn.attr('disabled',true);
 
         let filter = window.web3.eth.filter('latest');
         filter.watch((err, result)=>{
           if (!err) {
             console.log('block result',result);
             btn.val('Congrats!');
-            $('#submit-form').attr('disabled',true);
-            $('#reciept').html('reciept: ' + result);
+            $('#url').html(`share your lock: <a href="http://localhost:3000/${window.web3.eth.accounts[0]}">http://localhost:3000/${window.web3.eth.accounts[0]}</a>`);
+            $('#reciept').html(`reciept: ${result}`);
             $('.lock-bar')[0].className += ' animate-lock';
             filter.stopWatching();
             getLocks();
@@ -100,6 +102,12 @@ class Form extends Component {
     window.stopAnimGrass();
     $('#stars div').removeClass('star-anim');
     btn = $('#submit-form');
+    btn.attr('disabled',true);
+    $('input').add('textarea').on('input',()=>{//disable button if form full
+      if ($('#personA').val().length >= 1 && $('#personB').val().length >= 1 && $('#message').val().length >= 1 && btn.attr('disabled') == 'disabled'){
+        btn.attr('disabled',false);
+      }
+    })
   }
 
   componentWillUnmount(){
@@ -130,6 +138,7 @@ class Form extends Component {
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
                 <input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/>
+                <div id="url"></div>
                 <div id="reciept"></div>
               </div>
             </form>

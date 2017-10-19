@@ -379,8 +379,20 @@ class Canvas extends Component {
             yPos:null
           };
         })
-      }
+      }else if (this.state.isPreviewActive && currentLock.xPos !== xPos && currentLock.yPos !== yPos){
 
+        settingPreviewState = true;
+        this.setState({
+          isPreviewActive:true,
+          isLockHighlighted: true
+        },()=>{
+          settingPreviewState = false;
+          currentLock = {
+            xPos:xPos,
+            yPos:yPos
+          };
+        })
+      }
       yPosPrev = yPos;
       xPosPrev = xPos;
     }
