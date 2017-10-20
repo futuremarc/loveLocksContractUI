@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import Web3 from 'web3';
-import _ from 'lodash';
 import Form from './Form';
 import Canvas from './Canvas';
 import About from './About';
@@ -9,29 +8,12 @@ import SearchBar from './SearchBar'
 
 const Eth = require('ethjs-query');
 const EthContract = require('ethjs-contract');
-
-const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"},{"name":"id","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"},{"name":"","type":"address[]"}],"payable":false,"type":"function"}];
-const address = '0x4a21a48052721b746be58592522a29743e03de2a';
+const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"},{"name":"id","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"},{"name":"","type":"address[]"}],"payable":false,"type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"id","type":"address"}],"name":"txRecieved","type":"event"}]
+const address = '0x8b57723c23BAdd2878530a06a98548072B1EE516'; //0x8b57723c23BAdd2878530a06a98548072B1EE516 rinke
 let MiniToken, miniToken;
-
-
-
-function retryWeb3Provider(){
-  let eth, contract;
-
-  if (web3.currentProvider){
-    console.log('found web3 on retry')
-  }else{
-    console.log('no web3 on retry')
-    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-  }
-
-  eth = new Eth(web3.currentProvider);
-  contract = new EthContract(eth);
-  this.initContract(contract);
-}
-
 let web3 = window.web3 || null;
+let didRetry = false;
+
 
   class App extends Component {
     constructor(props) {
@@ -52,6 +34,8 @@ let web3 = window.web3 || null;
       this.zoom = this.zoom.bind(this);
       this.openAbout = this.openAbout.bind(this);
       this.closeAbout = this.closeAbout.bind(this);
+      this.connectWeb3 = this.connectWeb3.bind(this);
+      this.setTx = this.setTx.bind(this);
     }
 
     openForm(xPos,yPos){
@@ -80,7 +64,6 @@ let web3 = window.web3 || null;
     }
 
     getLocks(){
-
       let getMain = new Promise((resolve, reject)=>{
 
         miniToken.getLoveLocks().then((data)=>{
@@ -156,6 +139,33 @@ let web3 = window.web3 || null;
 
       MiniToken = contract(abi);
       miniToken = MiniToken.at(address);
+      const {txHash} = this.state;
+
+      let filter = web3.eth.filter("latest",function(error, blockHash) {
+        if (!error) {
+          web3.eth.getBlock(blockHash, false, (block)=>{
+            if (!block) return
+            if (block.length > 0) {
+              console.log("found " + block.length + " transactions in block " + blockHash);
+              console.log(JSON.stringify(block));
+
+              if (!txHash) return
+
+              block.forEach((item,index)=>{
+                console.log(item,txHash)
+                if (item === txHash) console.log('MATCH!')
+                else console.log('NO MATCH');
+              });
+            } else {
+                console.log("no transaction in block: " + blockHash);
+              }
+
+          });
+        }
+        this.getLocks();
+
+      }.bind(this));
+
       this.getLocks();
     }
 
@@ -174,28 +184,26 @@ let web3 = window.web3 || null;
       })
     }
 
-    componentWillMount() {
-
+    connectWeb3(){
       if (typeof web3 !== 'undefined' && web3 != null) {
-
         if (web3.currentProvider){
         console.log('found web3 already!')
         window.web3 = new Web3(web3.currentProvider);
         const eth = new Eth(web3.currentProvider)
         const contract = new EthContract(eth);
         this.initContract(contract);
-
-        } else {
-            setTimeout(retryWeb3Provider,500);
-          }
-
-       } else {
-        console.log('No web3? You should consider trying MetaMask!')
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-        const eth = new Eth(web3.currentProvider)
+      }
+    } else if (!didRetry){
+      setTimeout(this.connectWeb3,1000);
+    } else{
+        const eth = new Eth(web3.currentProvider);
         const contract = new EthContract(eth);
         this.initContract(contract);
-       }
+      }
+    }
+
+    componentWillMount() {
+      window.addEventListener('load', this.connectWeb3);
     }
 
     componentDidMount() {
@@ -214,6 +222,12 @@ let web3 = window.web3 || null;
       });
     }
 
+    setTx(hash){
+      this.setState({
+        txHash:hash
+      })
+    }
+
 
     render() {
 
@@ -225,7 +239,7 @@ let web3 = window.web3 || null;
       return (
         <div className="App">
           { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
-          { this.state.isFormActive ? <Form miniToken={miniToken} web3={web3} getLocks={this.getLocks} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
+          { this.state.isFormActive ? <Form moveGrid={this.moveGrid} xPoses={xPoses} yPoses={yPoses} setTx={this.setTx} miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
           <div id="header"><img src="/logo-white.png"></img></div>
 

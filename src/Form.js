@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import Portal from 'react-minimalist-portal';
 import ColorPicker  from './ColorPicker';
+import _ from 'lodash';
 let btn;
 
 
@@ -26,13 +27,11 @@ class Form extends Component {
   onSubmit(e){
     console.log('onSubmit', this.props)
     e.preventDefault();
-    let {miniToken, getLocks} = this.props;
-
-
+    let {miniToken, getLocks, setTx} = this.props;
     let message = $('#message').val();
-    var splitMsg = [];
+    let splitMsg = [];
 
-    for (var i = 0; i < message.length; i += 32) {
+    for (let i = 0; i < message.length; i += 32) {
         splitMsg.push(message.substring(i, i + 32));
     }
 
@@ -59,29 +58,16 @@ class Form extends Component {
         alert('Please fill all the fields.');
         return
       }
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((data,err)=>{
-        console.log(data,err);
+      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((blockHash,err)=>{
+        console.log(blockHash,err);
         btn.val('Engraving... (mining block)');
+        $('#url').html('this may take up to a minute...');
         btn.attr('disabled',true);
-
-        let filter = window.web3.eth.filter('latest');
-        filter.watch((err, result)=>{
-          if (!err) {
-            console.log('block result',result);
-            btn.val('Congrats!');
-            $('#url').html(`share your lock: <a href="http://localhost:3000/${window.web3.eth.accounts[0]}">http://localhost:3000/${window.web3.eth.accounts[0]}</a>`);
-            $('#reciept').html(`reciept: ${result}`);
-            $('.lock-bar')[0].className += ' animate-lock';
-            filter.stopWatching();
-            getLocks();
-
-          } else {
-            console.error(err);
-            btn.val('Sorry, something went wrong.');
-          }
+        setTx(blockHash);
+        this.setState({
+          xPos:xPos,
+          yPos:yPos
         })
-
-
       })
   }
 
@@ -94,6 +80,31 @@ class Form extends Component {
   componentWillMount(){
   }
 
+  componentWillReceiveProps(nextProps){
+    const {xPoses,yPoses,moveGrid} = nextProps;
+    const {xPos, yPos} = this.state;
+
+    _.map(xPoses, (value, index) => {
+
+      if (xPoses[index] == xPos && yPoses[index] == yPos){
+
+        btn.val('Congrats!');
+        $('#url').html(`share your lock: <a href="http://localhost:3000/${window.web3.eth.accounts[0]}">http://localhost:3000/${window.web3.eth.accounts[0]}</a>`);
+        $('.lock-bar')[0].className += ' animate-lock';
+
+        let x = xPos;
+        let y = yPos;
+        this.setState({
+          xPos: null,
+          yPos: null
+        },()=>{
+          moveGrid(x, y);
+        });
+      }
+    });
+  }
+
+
   shouldComponentUpdate(nextProps) {
     return (this.props.messages !== nextProps.messages);
   }
@@ -103,7 +114,7 @@ class Form extends Component {
     $('#stars div').removeClass('star-anim');
     btn = $('#submit-form');
     btn.attr('disabled',true);
-    $('input').add('textarea').on('input',()=>{//disable button if form full
+    $('#personA').add('#personB').add('#message').on('input',()=>{//disable button if form full
       if ($('#personA').val().length >= 1 && $('#personB').val().length >= 1 && $('#message').val().length >= 1 && btn.attr('disabled') == 'disabled'){
         btn.attr('disabled',false);
       }
@@ -139,7 +150,7 @@ class Form extends Component {
                 <ColorPicker onColorPick={ this.onColorPick }/>
                 <input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/>
                 <div id="url"></div>
-                <div id="reciept"></div>
+                <div id="receipt"></div>
               </div>
             </form>
         </div>

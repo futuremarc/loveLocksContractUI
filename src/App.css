@@ -54,7 +54,7 @@ body {
   }
 }
 
-#reciept, #url{
+#receipt, #url{
   font-size:10px;
   color:white;
   text-align: center;
@@ -273,12 +273,17 @@ input {
 input[type=submit] {
   cursor: pointer;
   width: 75%;
-  background-color: hsla(0, 0%, 5%, .7);
+  background-color: hsla(0, 0%, 5%, .5);
   margin: 34px auto 10px auto;
 }
 
 input[type=submit]:hover:enabled {
   box-shadow: 0 0 15px hsla(0, 0%, 100%, 1);
+  background-color: hsla(0, 0%, 5%, .6);
+}
+
+input[type=submit]:disabled {
+  background-color: hsla(0, 0%, 5%, .4);
 }
 
 
@@ -354,7 +359,7 @@ input:last-child {
 .about-modal{
   background-color: #eee;
   color:black;
-  border-radius:7px;
+  /*border-radius:10px;*/
   position: relative;
   /*margin:0 auto;
   padding: 10em;*/
@@ -366,7 +371,7 @@ input:last-child {
   margin: 7% auto;
   max-height: 56em;
   min-height: 38em;
-  width:500px;
+  width:750px;
   padding: 3em;
 }
 
@@ -477,7 +482,7 @@ input:last-child {
 
 .zoom{
   width:50%;
-  opacity:.77;
+  opacity:.87;
   height:100%;
   display:inline-block;
   vertical-align: top;
@@ -553,7 +558,7 @@ input:last-child {
 }
 
 #close-about{
-  color:  rgba(0,0,0,.4);
+  color:  rgba(0,0,0,.3);
   font-size: 3.4em;
   padding: 0px 10px;
   position: absolute;
@@ -565,5 +570,5 @@ input:last-child {
   z-index: 1;
 }
 #close-about:hover{
-  color: #bbb;
+  color:  rgba(0,0,0,.4);
 }

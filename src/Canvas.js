@@ -49,12 +49,13 @@ class Canvas extends Component {
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
+    this.handleWheel = this.handleWheel.bind(this);
+    this.onWheel = this.onWheel.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
     this.focusLock = this.focusLock.bind(this);
     this.isValidPos = this.isValidPos.bind(this);
     this.isPosTaken = this.isPosTaken.bind(this);
-    this.handleWheel = this.handleWheel.bind(this);
-    this.onWheel = this.onWheel.bind(this);
+    this.setCurrentLock = this.setCurrentLock.bind(this);
   }
 
 
@@ -76,10 +77,7 @@ class Canvas extends Component {
     this.setState({
       isLockHighlighted: true
     },()=>{
-      currentLock = {
-        xPos: moveX,
-        yPos: moveY
-      }
+      this.setCurrentLock(moveX,moveY);
       gScale = 10;
       gX = (-moveX )* ((gridSize) * gScale) + canvas.width/2;
       gY = (-moveY )* ((gridSize) * gScale) + canvas.height/2;
@@ -87,18 +85,17 @@ class Canvas extends Component {
       checkBoundaries();
       this.drawGrid();
     })
-
   }
 
-  isPosTaken(xPos,yPos,mouseX,mouseY){
+  setCurrentLock(xPos,yPos){
 
-    let usedUp = false;
     const {locks} = this.state;
+    let exists = false;
 
     _.map(locks.xPoses, (value, index) => {
 
       if (locks.xPoses[index] == xPos && locks.yPoses[index] == yPos){
-        usedUp = true;
+        exists = true;
         currentLock = {
           personA:locks.personsA[index],
           personB:locks.personsB[index],
@@ -113,8 +110,18 @@ class Canvas extends Component {
         }
       }
     });
+    console.log('currentLock',currentLock)
+    return exists;
+  }
 
-    if (usedUp && !settingPreviewState && !this.state.isPreviewActive){
+  isPosTaken(xPos,yPos,mouseX,mouseY){
+
+    let lockExists = false;
+    const {locks} = this.state;
+
+    lockExists = this.setCurrentLock(xPos,yPos);
+
+    if (lockExists && !settingPreviewState && !this.state.isPreviewActive){
 
       mX = mouseX;
       mY = mouseY;
@@ -130,7 +137,7 @@ class Canvas extends Component {
 
     }
 
-    return usedUp;
+    return lockExists;
   }
 
   drawGrid() {
@@ -146,6 +153,7 @@ class Canvas extends Component {
     ctx.lineWidth = gridSize/10;
     ctx.strokeStyle = '#bbb';
 
+    console.log('highlight debug',this.state.isPreviewActive,this.state.isLockHighlighted,currentLock.xPos,currentLock.yPos,currentLock)
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
@@ -155,6 +163,7 @@ class Canvas extends Component {
         ctx.arc(x,y +.5, lockBarSize * 1.1, Math.PI,0, false);
         ctx.closePath();
         ctx.stroke();
+        console.log('highlight current lock')
         ctx.strokeStyle = '#bbb';
       }
 
@@ -387,10 +396,7 @@ class Canvas extends Component {
           isLockHighlighted: true
         },()=>{
           settingPreviewState = false;
-          currentLock = {
-            xPos:xPos,
-            yPos:yPos
-          };
+          this.setCurrentLock(xPos,yPos);
         })
       }
       yPosPrev = yPos;
@@ -417,20 +423,21 @@ class Canvas extends Component {
       locks:data
     },()=>{
       if (shouldGridMove && !didMoveGrid){
-        currentLock = {
-          xPos: moveX,
-          yPos: moveY
-        }
         this.focusLock(moveX,moveY);
       } else if (shouldZoom){
           isZooming = true;
-          if (zoomDirection == 'zoom-out' && gScale > 1)gScale -= .75;
-          else if (zoomDirection == 'zoom-in') gScale += .75;
-          isZooming = false;
+          if (zoomDirection == 'zoom-out' && gScale > 1){
+            gScale -= .75;
+          }
+          else if (zoomDirection == 'zoom-in'){
+            gScale += .75;
+          }
         }
 
       checkBoundaries();
       this.drawGrid()
+      isZooming = false;
+
     });
 
   }
@@ -441,16 +448,19 @@ class Canvas extends Component {
      page('/:id', function(ctx, next){
        if (self.state.hasRouted) return
 
+       let id = ctx.params.id;
        let search = document.getElementById('search');
+
        var event = new Event('input', { bubbles: true});
         event.simulated = true;
-        search.value = ctx.params.id;
+        search.value = id;
         search.dispatchEvent(event);
         search.value = '';
+
         self.setState({
           hasRouted: true
         })
-     });
+     }.bind(this));
      page();
 
     displayCnv = document.getElementById('display-canvas'); //onscreen canvas

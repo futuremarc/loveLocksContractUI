@@ -13,7 +13,7 @@ class SearchBar extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return (false);
+    return (this.props.messages !== nextProps.messages);
   }
 
   componentDidMount(){
@@ -23,6 +23,8 @@ class SearchBar extends Component {
   onChange() {
     const {ids, xPoses, yPoses, moveGrid} = this.props;
     const id =  input.value.toLowerCase();
+
+    console.log('SEARCH', id)
     _.map(ids, (value, index) => {
 
         console.log(value, id, value == id)
