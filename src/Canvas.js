@@ -13,10 +13,10 @@ let gH = rows * gridSize;
 let canvas, context;
 let displayCnv, ctx;
 
-let gX = 0, gY = 0, pX = 0, pY = 0, gScale = 4, speed = 2;
-let mX, mY, currentLock = {xPos:null, yPos:null};
+let gX = 0, gY = 0, pX = 0, pY = 0, gScale = 1, speed = 2;
+let mX, mY,xOnDown, yOnDown;
 let lastPx, lastPy;
-
+let currentLock = {xPos:null, yPos:null};
 let isDown = false, isDragging = false, dragTimeout = null;
 let isCoordValid = false;
 let isZooming = false, zoomOffX = 0, zoomOffY = 0;
@@ -26,6 +26,7 @@ let settingPreviewState = false;
 let mQuadrant;
 let activeLock;
 let xPosPrev, yPosPrev;
+let highlightedLock;
 
 function checkBoundaries(){
   if (gX > 0) gX = 0;
@@ -64,7 +65,8 @@ class Canvas extends Component {
     let isPosTaken = false;
     const {locks} = this.state;
 
-    if (((xPos % 2 === 0 && yPos % 2 !== 0) || (xPos % 2 !== 0 && yPos % 2 === 0)) && !this.isPosTaken(xPos,yPos,mouseX,mouseY)){
+
+    if (((xPos % 2 == 0 && yPos % 2 != 0) || (xPos % 2 != 0 && yPos % 2 == 0)) && !this.isPosTaken(xPos,yPos,mouseX,mouseY) && (xPos != 0 && yPos != rows)){
      return true;
    }
     else{
@@ -110,7 +112,6 @@ class Canvas extends Component {
         }
       }
     });
-    console.log('currentLock',currentLock)
     return exists;
   }
 
@@ -128,7 +129,8 @@ class Canvas extends Component {
 
       settingPreviewState = true;
       this.setState({
-        isPreviewActive:true
+        isPreviewActive:true,
+        isLockHighlighted:true
       },()=>{
         displayCnv.className = 'default-mouse';
         settingPreviewState = false;
@@ -153,17 +155,17 @@ class Canvas extends Component {
     ctx.lineWidth = gridSize/10;
     ctx.strokeStyle = '#bbb';
 
-    console.log('highlight debug',this.state.isPreviewActive,this.state.isLockHighlighted,currentLock.xPos,currentLock.yPos,currentLock)
     _.map(this.state.locks.colors, (value, index) => {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
-      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] === currentLock.xPos && this.state.locks.yPoses[index] === currentLock.yPos){
-        ctx.strokeStyle = '#ffff00';
+
+      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] == currentLock.xPos && this.state.locks.yPoses[index] == currentLock.yPos){
+        highlightedLock = this.state.locks.ids[index];
+        ctx.strokeStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(x,y +.5, lockBarSize * 1.1, Math.PI,0, false);
         ctx.closePath();
         ctx.stroke();
-        console.log('highlight current lock')
         ctx.strokeStyle = '#bbb';
       }
 
@@ -212,8 +214,8 @@ class Canvas extends Component {
       let x = this.state.locks.xPoses[index] * gridSize;
       let y = this.state.locks.yPoses[index] * gridSize;
 
-      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] === currentLock.xPos && this.state.locks.yPoses[index] === currentLock.yPos){
-        ctx.strokeStyle = '#ffff00';
+      if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] == currentLock.xPos && this.state.locks.yPoses[index] == currentLock.yPos){
+        ctx.strokeStyle = '#ffffff';
         ctx.strokeRect(x - (rectSize/2) * 1.1 , y+1  , rectSize * 1.1, rectSize * .83 * 1.05);
         ctx.fillRect(x - (rectSize/2) * 1.1 , y+1, rectSize * 1.1, rectSize * .83 * 1.05);
       }
@@ -284,33 +286,29 @@ class Canvas extends Component {
 
     let e = event.nativeEvent;
     isDown = true;
-    pX = e.pageX;
-    pY = e.pageY;
-    // lastPx = pX;
-    // lastPy = pY;
+    pX = xOnDown = e.pageX;
+    pY = yOnDown = e.pageY;
 
     isDragging = false;
-    let dragTimeout = setTimeout(()=>{
-      // console.log(lastPx , pX , lastPy , pY)
-      // if (lastPx !== pX || lastPy !== pY) isDragging = true;
+
+  }
+
+  onMouseUp(event){
+    const {openForm} = this.props;
+    let e = event.nativeEvent;
+
+    isDown = false;
+
+    if ((xOnDown != e.pageX || yOnDown != e.pageY)){
       isDragging = true;
-      if (this.state.isPreviewActive){
       this.setState({
         isPreviewActive:null
       })
     }
-  },100);
-  }
-
-  onMouseUp(e){
-    const {openForm} = this.props;
-    isDown = false;
-    clearTimeout(dragTimeout);
-
 
     if (!isDragging){
-      const xPos = Math.round((e.nativeEvent.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
-      const yPos = Math.round((e.nativeEvent.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
+      const xPos = Math.round((e.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
+      const yPos = Math.round((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
       if (this.isValidPos(xPos,yPos)) openForm(xPos,yPos);
     }
     isDragging = false;
@@ -319,9 +317,11 @@ class Canvas extends Component {
   onMouseMove(event){
     let e = event.nativeEvent;
 
-    isZooming = false; //incase wheel event still running
     mX = e.pageX;
     mY = e.pageY;
+
+
+    isZooming = false; //incase wheel event still running
 
     if (e.pageX < window.innerWidth/2 && e.pageY < window.innerHeight/2){
       mQuadrant = 1;
@@ -349,10 +349,12 @@ class Canvas extends Component {
       const yPos = Math.round((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
       const yPosReal = (e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale;
 
-      if ((this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid) || (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos !== xPosPrev && yPos !== yPosPrev)){ //first time hovering valid
+      let shouldRedraw = (xPos != xPosPrev && yPos != yPosPrev);
+
+      if ((this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid || (shouldRedraw && this.isValidPos(xPos,yPos,e.pageX,e.pageY)))){ //first time hovering valid
 
         isCoordValid = true;
-        if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos !== xPosPrev && yPos !== yPosPrev) this.drawGrid(); //reset if last pos was valid
+        if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos != xPosPrev && yPos != yPosPrev) this.drawGrid(); //reset if last pos was valid
         ctx.clearRect(0,0,canvas.width,canvas.height); //draw validation vircle over pos
         ctx.save();
 
@@ -388,15 +390,21 @@ class Canvas extends Component {
             yPos:null
           };
         })
-      }else if (this.state.isPreviewActive && currentLock.xPos !== xPos && currentLock.yPos !== yPos){
+      }else if (this.state.isPreviewActive){
 
         settingPreviewState = true;
+
+        if (highlightedLock != currentLock.id){//redraw if not highlighting new lock
+          this.setCurrentLock(xPos,yPos);
+          this.drawGrid();
+          console.log('redraw', highlightedLock, currentLock.id)
+        }
         this.setState({
-          isPreviewActive:true,
+          isPreviewActive: true,
           isLockHighlighted: true
         },()=>{
           settingPreviewState = false;
-          this.setCurrentLock(xPos,yPos);
+
         })
       }
       yPosPrev = yPos;
@@ -426,8 +434,9 @@ class Canvas extends Component {
         this.focusLock(moveX,moveY);
       } else if (shouldZoom){
           isZooming = true;
-          if (zoomDirection == 'zoom-out' && gScale > 1){
+          if (zoomDirection == 'zoom-out'){
             gScale -= .75;
+            if (gScale <= 1) gScale = 1;
           }
           else if (zoomDirection == 'zoom-in'){
             gScale += .75;

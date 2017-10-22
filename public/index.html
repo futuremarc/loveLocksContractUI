@@ -7,7 +7,7 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <title>Crypto Love Locks</title>
+    <title>CryptoLoveLocks</title>
   </head>
   <body>
 
@@ -16,7 +16,7 @@
     <div id="stars"></div>
 
     <script>
-      function calculatePosition(){
+      function initStars(){
         let noOfStars = 15;
         let starsContainer = document.querySelector("#stars");
         for (let i = 0; i < noOfStars; i++) {
@@ -36,7 +36,7 @@
           star.style.animationDelay = randVerticalPos/10 + "s";
         });
       };
-      calculatePosition();
+      initStars();
     </script>
 
     <script>
