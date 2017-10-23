@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/manifest.json"><link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA///3AP//9wD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA///3AP+t9wD/gPcA/633AP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA///3AP+A9wD/oPcA/633AP+g9wD/gPcA//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA///3AP+A9wD/gPcA/4D3AP+A9wD/gPcA/4D3AP+A9wD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA///3AP+A9wD/gPcA/4D3AP+A9wD/SvcA/4D3AP+A9wD/gPcA/4D3AP//AAAAAAAAAAAAAAAAAAAAAAAAAAD3AP//9wD/gPcA/4D3AP+A9wD/SvcA/0r3AP9K9wD/gPcA/4D3AP+A9wD//wAAAAAAAAAAAAAAAAAAAAAAAAAA9wD///cA/0r3AP9K9wD/SvcA/0r3AP9K9wD/SvcA/0r3AP9K9wD/SvcA//8AAAAAAAAAAAAAAAAAAAAAAAAAAPcA//////9s9wD/SvcA/0r///9s9wD//////2z3AP9K9wD/Sv///2z3AP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9wD//////2z///9s9wD//wAAAAD3AP//////bP///2z3AP//AAAAAAAAAAD3AP//AAAAAAAAAAAAAAAAAAAAAAAAAAD3AP//9wD//wAAAAAAAAAAAAAAAPcA///3AP//AAAAAAAAAAD3AP//9wD///cA//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD3AP//9wD/rfcA/633AP+t9wD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD3AP//9wD/gPcA/0r3AP9K9wD/SvcA/4D3AP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9wD///cA/0r3AP9K9wD///cA/0r3AP9K9wD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPcA//////9s9wD//wAAAAD3AP//////bPcA//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9wD//wAAAAAAAAAAAAAAAPcA//8AAAAA+/8AAPH/AADg/wAAwH8AAIA/AAAEHwAADh8AAH/fAAB73wAAtbcAAM5jAAD/wQAA/5wAAP+2AAD/qgAA/90AAA==" rel="icon" type="image/x-icon"/><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><title>CryptoLoveLocks</title><link href="/static/css/main.5df86daf.css" rel="stylesheet"></head><body><div id="root"></div><canvas id="grass-canvas"></canvas><div id="stars"></div><script>function initStars(){
+        let noOfStars = 15;
+        let starsContainer = document.querySelector("#stars");
+        for (let i = 0; i < noOfStars; i++) {
+          let starDiv = document.createElement("div", "");
+          starDiv.className = "star-anim star";
+          starsContainer.appendChild(starDiv);
+        }
+        let stars = document.querySelectorAll(".star");
+        stars.forEach((star) => {
+          let starSize = Math.floor(Math.random() * (3.5)+2);
+          let randVerticalPos = Math.floor(Math.random() * 48.5) + 3;
+          let randHorizontalPos = Math.floor(Math.random() * 90);
+          star.style.right = randHorizontalPos + "%";
+          star.style.top = randVerticalPos+ "%";
+          star.style.width = starSize + "px";
+          star.style.height = starSize + "px";
+          star.style.animationDelay = randVerticalPos/10 + "s";
+        });
+      };
+      initStars();</script><script>/**
+       * Original version http://labs.hyperandroid.com/js1k
+       */
+
+      (function() {
+        Grass = function() {
+          return this;
+        };
+
+        Grass.prototype= {
+          alto_hierba: 0,    // grass height
+          maxAngle:    0,    // maximum grass rotation angle (wind movement)
+          angle:       0,    // construction angle. thus, every grass is different to others
+          coords:      null,  // quadric bezier curves coordinates
+          color:       null,  // grass color. modified by ambient component.
+          offset_control_point:   3,    // grass base width. greater values, wider at the basement.
+
+          initialize : function(renderCnvWidth, renderCnvHeight, minHeight, maxHeight, angleMax, initialMaxAngle)  {
+
+            // grass start position
+            var sx= Math.floor( Math.random()*renderCnvWidth );
+            var sy= renderCnvHeight;
+
+            // quadric curve middle control point. higher values means wider grass from base to peak.
+            // try offset_control_x=10 for thicker grass.
+            var offset_control_x=1.5;
+
+            this.alto_hierba= minHeight+Math.random()*maxHeight;
+            this.maxAngle= 10+Math.random()*angleMax;
+            this.angle= Math.random()*initialMaxAngle*(Math.random()<0.5?1:-1)*Math.PI/180;
+
+            var csx= sx-offset_control_x ;
+
+            var csy= 0;
+            if ( Math.random()<0.1 ) {
+              csy= sy-this.alto_hierba;
+            } else {
+              csy= sy-this.alto_hierba/2;
+            }
+
+            var psx= csx;
+            // changed var psy= csy; to
+            var psy= csy-offset_control_x;
+
+            // the bigger offset_control_point, the wider on its basement.
+            this.offset_control_point=3;
+            var dx= sx+this.offset_control_point;
+            var dy= sy;
+
+            this.coords= [sx,sy,csx,csy,psx,psy,dx,dy];
+
+            // grass color.
+            this.color= [16+Math.floor(Math.random()*32),
+                         100+Math.floor(Math.random()*155),
+                         16+Math.floor(Math.random()*32) ];
+
+          },
+
+
+          paint : function(ctx,time,ambient) {
+
+            ctx.save();
+
+            // grass peak position. how much to rotate the peak.
+            // less values (ie the .0005), will make as if there were a softer wind.
+            var inc_punta_hierba= Math.sin(time*0.0005);
+
+            // rotate the point, so grass curves are modified accordingly. If just moved horizontally, the curbe would
+            // end by being unstable with undesired visuals.
+            var ang= this.angle + Math.PI/2 + inc_punta_hierba * Math.PI/180*(this.maxAngle*Math.cos(time*0.0002));
+            var px= this.coords[0]+ this.offset_control_point + this.alto_hierba*Math.cos(ang);
+            var py= this.coords[1]                  - this.alto_hierba*Math.sin(ang);
+
+            var c= this.coords;
+
+            ctx.beginPath();
+            ctx.moveTo( c[0], c[1] );
+            ctx.bezierCurveTo(c[0], c[1], c[2], c[3], px, py);
+            ctx.bezierCurveTo(px, py, c[4], c[5], c[6], c[7]);
+            ctx.closePath();
+            ctx.fillStyle='rgb('+
+                Math.floor(this.color[0]*ambient)+','+
+                Math.floor(this.color[1]*ambient)+','+
+                Math.floor(this.color[2]*ambient)+')';
+            ctx.fill();
+            ctx.restore();
+
+          }
+        };
+      })();
+
+      (function() {
+        Garden= function() {
+          return this;
+        };
+
+        Garden.prototype= {
+          grass:      null,
+          ambient:    1,
+          stars:      null,
+          firefly_radius:  10,
+          num_fireflyes:  0,
+          num_stars:    512,
+          width:      0,
+          height:      0,
+
+          initialize : function(width, height, size)  {
+            this.width= width;
+            this.height= height;
+            this.grass= [];
+
+            for(var i=0; i<size; i++ ) {
+              var g= new Grass();
+              g.initialize(
+                  width,
+                  height,
+                  50,      // min grass height
+                  height, // max grass height
+                  20,     // grass max initial random angle
+                  40      // max random angle for animation
+                  );
+              this.grass.push(g);
+            }
+
+          },
+
+          paint : function(ctx, time){
+            ctx.save();
+            ctx.globalAlpha= 1;
+            for(i=0; i<this.grass.length; i++ ) {
+              this.grass[i].paint(ctx,time,0.0513799);
+            }
+            ctx.restore();
+          }
+        };
+      })();
+
+      window.animGrass = function()    {
+        ctx.clearRect(0,0,renderCnv.width ,renderCnv.height);
+        context.clearRect(0,0,renderCnv.width ,renderCnv.height);
+        var ntime= new Date().getTime();
+        var elapsed= ntime-time;
+        garden.paint( ctx, elapsed );
+        context.drawImage(renderCnv, 0, 0);
+      }
+
+
+      var renderCnv= null, ctx= null, garden= null, gradient, time;
+
+      window.initGarden = function(images) {
+
+          renderCnv= document.createElement('canvas');
+          displayCnv = document.getElementById('grass-canvas'); //render offscreen and copy to display cnv
+          context = displayCnv.getContext('2d');
+          ctx= renderCnv.getContext('2d');
+          renderCnv.width= window.innerWidth;
+          renderCnv.height=window.innerHeight/4.5;
+          displayCnv.width= window.innerWidth;
+          displayCnv.height=window.innerHeight/4.5;
+
+          garden= new Garden();
+          garden.initialize(renderCnv.width, renderCnv.height, 180);
+
+          window.addEventListener('resize', (e)=>{
+            renderCnv.width = window.innerWidth;
+            renderCnv.height = window.innerHeight/4.5;
+            displayCnv.width= window.innerWidth;
+            displayCnv.height=window.innerHeight/4.5;
+            garden.initialize(renderCnv.width, renderCnv.height, 300);
+            animGrass();
+          })
+
+          time= new Date().getTime();
+
+          function loop() {
+            if (!window.requestId) return
+            requestAnimationFrame( loop );
+            animGrass();
+        }
+
+        window.startAnimGrass = function() {
+          if (!window.requestId) {
+             window.requestId = window.requestAnimationFrame(animGrass);
+          }
+          loop();
+        }
+
+        window.stopAnimGrass = function() {
+            if (window.requestId) {
+               window.cancelAnimationFrame(window.requestId);
+               window.requestId = undefined;
+            }
+        }
+
+        time = new Date().getTime();
+        startAnimGrass();
+      }</script><script type="text/javascript" src="/static/js/main.aa5beadc.js"></script></body></html>
