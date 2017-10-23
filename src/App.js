@@ -247,7 +247,7 @@ function cleanStr(str){
           { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
           { this.state.isFormActive ? <Form moveGrid={this.moveGrid} xPoses={xPoses} yPoses={yPoses} setTx={this.setTx} miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
-          <div onMouseDown={this.openAbout} id="header"><img src="/logo-white.png"></img></div>
+          <div onMouseDown={this.openAbout} id="header"><img src="/loveLocksContractUI/static/logo-white.png"></img></div>
 
           <SearchBar moveX={moveX} moveY={moveY} moveGrid={this.moveGrid} xPoses={xPoses} yPoses= {yPoses} ids={ids}/>
           <div id="zoom-btns">

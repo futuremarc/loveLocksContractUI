@@ -466,7 +466,7 @@ input:last-child {
   width:20px;
   transition: width 1s;
   z-index:9;
-  background: url("/search-light.png") left no-repeat;
+  background: url("/loveLocksContractUI/static/search-light.png") left no-repeat;
   color:#ccc;
   opacity:.85;
   background-size: 33.75px 22px;
@@ -477,7 +477,7 @@ input:last-child {
 }
 
 #search:hover{
-  background: url("/search.png") left no-repeat;
+  background: url("/loveLocksContractUI/static/search.png") left no-repeat;
   background-color: rgba(0,0,0,.65);
   background-size: 33.75px 22px;
   width:250px;
