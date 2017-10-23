@@ -202,7 +202,7 @@ function cleanStr(str){
       }
     } else if (!didRetry){
       console.log('retry web3')
-      setTimeout(this.connectWeb3,1000);
+      setTimeout(this.connectWeb3,100);
       didRetry = true;
     } else{
         console.log('no web3 found')

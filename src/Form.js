@@ -58,6 +58,11 @@ class Form extends Component {
         alert('Please fill all the fields.');
         return
       }
+
+      if (!window.web3.eth.accounts[0]){
+        alert('Please use Meta Mask or a Web3 enabled browser.');
+        return
+      }
       miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((blockHash,err)=>{
         console.log(blockHash,err);
         btn.val('Engraving...');
