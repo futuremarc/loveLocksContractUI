@@ -279,6 +279,7 @@ class Canvas extends Component {
   handleWheel(delta) {
     gScale += delta * 0.04;
     if (gScale < 1) gScale = 1;
+    if (this.state.isPreviewActive) this.setState({isPreviewActive:false});
     checkBoundaries();
     this.drawGrid();
   }
