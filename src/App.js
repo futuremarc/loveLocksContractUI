@@ -192,6 +192,7 @@ function cleanStr(str){
 
     connectWeb3(){
       if (typeof web3 !== 'undefined' && web3 != null) {
+        console.log('web3 exists')
         if (web3.currentProvider){
         console.log('found web3 already!')
         window.web3 = new Web3(web3.currentProvider);
@@ -200,10 +201,15 @@ function cleanStr(str){
         this.initContract(contract);
       }
     } else if (!didRetry){
+      console.log('retry web3')
       setTimeout(this.connectWeb3,1000);
+      didRetry = true;
     } else{
+        console.log('no web3 found')
+        web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/"));
         const eth = new Eth(web3.currentProvider);
         const contract = new EthContract(eth);
+        window.web3 = web3;
         this.initContract(contract);
       }
     }
