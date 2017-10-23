@@ -26,7 +26,7 @@ let settingPreviewState = false;
 let mQuadrant;
 let activeLock;
 let xPosPrev, yPosPrev;
-let highlightedLock;
+let highlightedLock = {xPos:null,yPos:null};
 
 function checkBoundaries(){
   if (gX > 0) gX = 0;
@@ -62,9 +62,7 @@ class Canvas extends Component {
 
   isValidPos(xPos,yPos,mouseX,mouseY){
 
-    let isPosTaken = false;
     const {locks} = this.state;
-
 
     if (((xPos % 2 == 0 && yPos % 2 != 0) || (xPos % 2 != 0 && yPos % 2 == 0)) && !this.isPosTaken(xPos,yPos,mouseX,mouseY) && (xPos != 0 && yPos != rows)){
      return true;
@@ -160,7 +158,10 @@ class Canvas extends Component {
       let y = this.state.locks.yPoses[index] * gridSize;
 
       if ((this.state.isPreviewActive || this.state.isLockHighlighted) && this.state.locks.xPoses[index] == currentLock.xPos && this.state.locks.yPoses[index] == currentLock.yPos){
-        highlightedLock = this.state.locks.ids[index];
+        highlightedLock = {
+          xPos:this.state.locks.xPoses[index],
+          yPos:this.state.locks.yPoses[index]
+        };
         ctx.strokeStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(x,y +.5, lockBarSize * 1.1, Math.PI,0, false);
@@ -320,7 +321,6 @@ class Canvas extends Component {
     mX = e.pageX;
     mY = e.pageY;
 
-
     isZooming = false; //incase wheel event still running
 
     if (e.pageX < window.innerWidth/2 && e.pageY < window.innerHeight/2){
@@ -334,6 +334,9 @@ class Canvas extends Component {
     }
 
     if (isDown) {
+        this.setState({
+          isPreviewActive:null
+        })
 
         gX += -(pX - e.pageX) * speed;
         gY += -(pY - e.pageY) * speed;
@@ -346,12 +349,12 @@ class Canvas extends Component {
       }else{
 
       const xPos = Math.round((e.offsetX/gridSize + (Math.abs(gX)/gridSize)) / gScale);
-      const yPos = Math.round((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
+      const yPos = Math.floor((e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale);
       const yPosReal = (e.offsetY/gridSize + (Math.abs(gY)/gridSize)) / gScale;
 
       let shouldRedraw = (xPos != xPosPrev && yPos != yPosPrev);
 
-      if ((this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid || (shouldRedraw && this.isValidPos(xPos,yPos,e.pageX,e.pageY)))){ //first time hovering valid
+      if (((this.isValidPos(xPos,yPos,e.pageX,e.pageY) && !isCoordValid) || (shouldRedraw && this.isValidPos(xPos,yPos,e.pageX,e.pageY)))){ //first time hovering valid
 
         isCoordValid = true;
         if (this.isValidPos(xPos,yPos,e.pageX,e.pageY) && xPos != xPosPrev && yPos != yPosPrev) this.drawGrid(); //reset if last pos was valid
@@ -393,9 +396,9 @@ class Canvas extends Component {
       }else if (this.state.isPreviewActive){
 
         settingPreviewState = true;
+        this.setCurrentLock(xPos,yPos);
 
-        if (highlightedLock != currentLock.id){//redraw if not highlighting new lock
-          this.setCurrentLock(xPos,yPos);
+        if (highlightedLock.xPos != currentLock.xPos && highlightedLock.yPos != currentLock.yPos){//redraw if not highlighting new lock
           this.drawGrid();
           console.log('redraw', highlightedLock, currentLock.id)
         }

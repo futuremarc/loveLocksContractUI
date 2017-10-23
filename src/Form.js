@@ -60,9 +60,11 @@ class Form extends Component {
       }
       miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((blockHash,err)=>{
         console.log(blockHash,err);
-        btn.val('Engraving... (mining block)');
-        $('#url').html('this may take up to a minute...');
+        btn.val('Engraving...');
+        $('#url').html('It may take a minute to mine your block.');
         btn.attr('disabled',true);
+        $('.slider-picker').hide();
+        btn.addClass('engraving');
         setTx(blockHash);
         this.setState({
           xPos:xPos,
@@ -88,8 +90,8 @@ class Form extends Component {
 
       if (xPoses[index] == xPos && yPoses[index] == yPos){
 
-        btn.val('Congrats!');
-        $('#url').html(`share your lock: <a href="http://localhost:3000/${window.web3.eth.accounts[0]}">http://localhost:3000/${window.web3.eth.accounts[0]}</a>`);
+        btn.val('Congrats! 🎉');
+        $('#url').html(`Share your lock: <a target="_blank" href="http://cryptolovelocks.co/${window.web3.eth.accounts[0]}">http://cryptolovelocks.co/${window.web3.eth.accounts[0]}</a>`);
         $('.lock-bar')[0].className += ' animate-lock';
 
         let x = xPos;
@@ -115,8 +117,10 @@ class Form extends Component {
     btn = $('#submit-form');
     btn.attr('disabled',true);
     $('#personA').add('#personB').add('#message').on('input',()=>{//disable button if form full
-      if ($('#personA').val().length >= 1 && $('#personB').val().length >= 1 && $('#message').val().length >= 1 && btn.attr('disabled') == 'disabled'){
+      if ($('#personA').val().length >= 1 && $('#personB').val().length >= 1 && $('#message').val().length >= 1){
         btn.attr('disabled',false);
+      }else {
+        btn.attr('disabled',true);
       }
     })
   }
@@ -144,7 +148,7 @@ class Form extends Component {
               <a href="#" onClick={this.onCloseClick} id="close-form"><span>×</span></a>
               <div style={{display:'none'}}><span id="xPos" className="lock-coords" data-val={xPos}>({xPos},</span><span className="lock-coords" id="yPos" data-val={yPos}>{yPos})</span></div>
               <input type="text" placeholder="You" id="personA" className="name-input" maxLength="32"></input><div className="lovers-cross">×</div><input type="text" placeholder="Your love" id="personB" className="name-input" maxLength="32"></input>
-              <textarea placeholder="Enter a memory or a message" id="message" maxLength="128"></textarea>
+              <textarea placeholder="Write down a message" id="message" maxLength="128"></textarea>
                 <div className="lock-bar">
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
