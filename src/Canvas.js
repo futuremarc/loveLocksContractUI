@@ -4,7 +4,7 @@ import _ from 'lodash';
 import page from 'page';
 
 let web3 = window.web3 || null;
-let cols = 200;
+let cols = 250;
 let rows = 150;
 let cells = rows * cols;
 let gridSize = 10;
@@ -145,9 +145,12 @@ class Canvas extends Component {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     context.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    ctx.translate(gX, gY);
+
+
     // if (isZooming) ctx.setTransform(gScale, 0, 0, gScale, -(gScale - 1) * (canvas.width/2), -(gScale - 1) * (canvas.height/2));
     // else ctx.scale(gScale, gScale);
+    // ctx.translate(-canvas.width/2,-canvas.height/2)
+    ctx.translate(gX, gY);
     ctx.scale(gScale, gScale);
     ctx.lineJoin = "round";
     ctx.lineWidth = gridSize/10;
@@ -440,10 +443,15 @@ class Canvas extends Component {
           isZooming = true;
           if (zoomDirection == 'zoom-out'){
             gScale -= .75;
+            // gX = gX - (gridSize * gScale);
+            // gY = gY - (gridSize * gScale);
+
             if (gScale <= 1) gScale = 1;
           }
           else if (zoomDirection == 'zoom-in'){
             gScale += .75;
+            // gX = gX + (gridSize * gScale) - canvas.width/2;
+            // gY = gY + (gridSize * gScale) - canvas.height/2;
           }
         }
 
