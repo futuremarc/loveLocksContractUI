@@ -54,7 +54,7 @@ class Form extends Component {
 
       console.log('submit',color, personA,personB,m1,m2,m3,m4,xPos,yPos,window.web3.eth.accounts[0]);
 
-      if (!personA || !color || !personB || !msg1 || !xPos || !yPos){
+      if (!personA || !color || !personB || !msg1 || xPos == 'undefined'|| yPos == 'undefined'){
         alert('Please fill all the fields.');
         return
       }

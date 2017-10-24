@@ -149,6 +149,7 @@ function cleanStr(str){
 
       let filter = web3.eth.filter("latest",function(error, blockHash) {
         if (!error) {
+          console.log('blackhash',blockHash)
           web3.eth.getBlock(blockHash, false, (block)=>{
             if (!block) return
             if (block.length > 0) {
@@ -167,6 +168,8 @@ function cleanStr(str){
               }
 
           });
+        }else{
+          console.log('error',error)
         }
         this.getLocks();
 
