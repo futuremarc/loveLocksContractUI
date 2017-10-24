@@ -19,13 +19,11 @@ class Form extends Component {
 
   onCloseClick(e){
     e.preventDefault();
-    console.log('close form');
     const {closeForm} = this.props;
     closeForm();
   }
 
   onSubmit(e){
-    console.log('onSubmit', this.props)
     e.preventDefault();
     let {miniToken, getLocks, setTx} = this.props;
     let message = $('#message').val();
@@ -63,19 +61,26 @@ class Form extends Component {
         alert('Please use Meta Mask or a Web3 enabled browser.');
         return
       }
-      miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '230000'}).then((blockHash,err)=>{
-        console.log(blockHash,err);
-        btn.val('Engraving...');
-        $('#url').html('It may take a minute to mine your block.');
-        btn.attr('disabled',true);
-        $('.slider-picker').hide();
-        btn.addClass('engraving');
-        setTx(blockHash);
-        this.setState({
-          xPos:xPos,
-          yPos:yPos
+
+
+      window.web3.eth.getGasPrice((err,price)=>{
+
+        miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '220000',gasPrice:price}).then((blockHash,err)=>{
+          console.log(blockHash,err);
+          btn.val('Engraving...');
+          $('#url').html('It may take a minute to mine your block.');
+          btn.attr('disabled',true);
+          $('.slider-picker').hide();
+          btn.addClass('engraving');
+          setTx(blockHash);
+          this.setState({
+            xPos:xPos,
+            yPos:yPos
+          })
         })
-      })
+
+      });
+
   }
 
   onColorPick(e){
@@ -157,7 +162,7 @@ class Form extends Component {
                 <div className="lock-bar">
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
-                <input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/>
+                <div className="btn-container"><input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/></div>
                 <div id="url"></div>
                 <div id="receipt"></div>
               </div>

@@ -68,9 +68,16 @@ body {
 }
 .about-body{
   font-size:18px;
-  padding:15px 20px;
+  padding:15px 20px 0px 20px;
 }
-
+.warning{
+  color:red;
+  font-size:12px;
+  text-align: center;
+}
+hr{
+  width:10%;
+}
 #short-title{
   font-weight: 500;
 }
@@ -129,11 +136,10 @@ body {
 }
 
 form{
-  width: 450px;
+  width: 445px;
   min-height:350px;
-
   padding: 25px;
-  margin-top:4%;
+  margin-top:6%;
 
 }
 
@@ -152,10 +158,10 @@ form{
 }
 
 .lock-bar {
-  height: 320px; width: 310px;
+  height: 280px; width: 340px;
   position: absolute;
-  top: -250px;
-  left: 42.5%;
+  top: -220px;
+  left: 39.5%;
   transform: rotateY(180deg);
   margin-left: -125px;
   border: 48px #bbb solid;
@@ -170,10 +176,10 @@ form{
 
 
 .preview-bar {
-  height: 275px; width: 215px;
+  height: 245px; width: 210px;
   position: absolute;
-  top: -100px;
-  left: 56%;
+  top: -90px;
+  left: 57%;
   transform: rotateY(0deg);
   margin-left: -125px;
   border: 32px #bbb solid;
@@ -299,11 +305,9 @@ form{
 input,textarea {
   height: 50px;
   display: block;
-  border-radius: 7px;
   font-size: 18px;
   outline: 0;
   border: none;
-  border-radius: 7px;
   background-color: rgba(255,255,255,.55);
 }
 
@@ -312,6 +316,8 @@ input[type=submit] {
   width: 60%;
   background-color: rgba(240,240,240,1);
   margin: 26px auto 10px auto;
+  border-radius: 7px;
+
 }
 
 input[type=submit]:hover:enabled {
@@ -342,6 +348,8 @@ input[type=submit]:disabled {
 
 .name-input,#message{
   color: #333;
+  border-radius: 7px;
+
 }
 
 .name-input::placeholder,#message::placeholder {
@@ -411,11 +419,10 @@ input:last-child {
   -webkit-overflow-scrolling: touch;
   height: 100%;*/
   margin: 7% auto;
-  height: 40em;
+  height: 600px;
   width:750px;
-  padding: 3em;
+  padding: 45px;
 }
-
 
 @media (max-width: 52em) {
 
@@ -475,7 +482,7 @@ input:last-child {
 
 #search{
   position: fixed;
-  bottom:90px;
+  bottom:120px;
   right:20px;
   font-size:18px;
   width:20px;
@@ -483,8 +490,8 @@ input:last-child {
   z-index:9;
   background: url("/search-light.png") left no-repeat;
   color:#ccc;
-  opacity:.85;
-  background-size: 33.75px 22px;
+  opacity:.80;
+  background-size: 38.35px 25px;
   padding-left:43px;
   /*background-color: hsla(0, 0%, 100%, .7);*/
   /*box-shadow: 2px 2px 1px rgba(0,0,0,.3);*/
@@ -495,7 +502,7 @@ input:last-child {
   background: url("/search.png") left no-repeat;
   background-color: rgba(0,0,0,.65);
   background-size: 33.75px 22px;
-  width:250px;
+  width:240px;
 }
 
 
@@ -520,15 +527,14 @@ input:last-child {
 
 #header > img{
 
-  width:180px;
+  width:215px;
   height:auto;
 }
 
 #about-header{
   font-size:30px;
-  padding-bottom:20px;
+  padding:0px;
   text-align: center;
-
   z-index:9;
 }
 
@@ -537,7 +543,7 @@ input:last-child {
   height:auto;
   display:block;
   margin:auto;
-  padding-bottom:10px;
+  padding-bottom:18px;
   position: relative;
 }
 
@@ -547,7 +553,7 @@ input:last-child {
   display:inline-block;
   vertical-align: top;
   user-select: none;
-  background: rgba(0,0,0,.65);
+  background: rgba(0,0,0,.75);
 }
 
 .zoom:hover{
@@ -556,7 +562,7 @@ input:last-child {
 }
 
 #zoom-btns{
-  bottom:20px;
+  bottom:40px;
   right:20px;
   position: fixed;
   font-size: 30px;
@@ -564,6 +570,8 @@ input:last-child {
   z-index:9;
   width:120px;
   height:50px;
+  box-shadow: 1px 1px 10px  rgba(70,70,70,.25);
+
 }
 #zoom-out{
   font-size: 22px;
@@ -632,4 +640,71 @@ input:last-child {
 }
 #close-about:hover{
   color:  rgba(0,0,0,.4);
+}
+
+
+
+.pulse1 {
+  animation: pulse1 1000ms linear normal infinite;
+}
+
+
+@keyframes pulse1 {
+  from {
+     opacity: 0;
+  }
+
+  50%{
+     opacity: 1;
+  }
+
+  100% {
+     opacity: 0;
+  }
+}
+
+.pulse2 {
+  animation: pulse2 1000ms linear normal infinite;
+}
+
+
+@keyframes pulse2 {
+  from {
+     opacity: .5;
+  }
+
+  25%{
+     opacity: 1;
+  }
+
+  50%{
+     opacity: .5;
+  }
+
+  50%{
+     opacity: .25;
+  }
+
+  100% {
+     opacity: 0;
+  }
+}
+
+.pulse3 {
+  animation: pulse3 1000ms linear normal infinite;
+}
+
+
+@keyframes pulse3 {
+  from {
+     opacity: 1;
+  }
+
+  50%{
+     opacity: 0;
+  }
+
+  100% {
+     opacity: 1;
+  }
 }

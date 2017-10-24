@@ -64,7 +64,7 @@ class Canvas extends Component {
 
     const {locks} = this.state;
 
-    if (((xPos % 2 == 0 && yPos % 2 != 0) || (xPos % 2 != 0 && yPos % 2 == 0)) && !this.isPosTaken(xPos,yPos,mouseX,mouseY) && (xPos != 0 && yPos != rows)){
+    if (((xPos % 2 == 0 && yPos % 2 != 0) || (xPos % 2 != 0 && yPos % 2 == 0)) && !this.isPosTaken(xPos,yPos,mouseX,mouseY) && (xPos != 0 && yPos != 0 && xPos != cols && yPos != rows)){
      return true;
    }
     else{
@@ -424,12 +424,10 @@ class Canvas extends Component {
   }
 
   componentWillMount(){
-    console.log('componentWillMount', this.props, this.state);
   }
 
   componentWillReceiveProps(nextProps){
 
-    console.log('componentWillReceiveProps', this.props, this.state, nextProps)
     let data = {...nextProps};
     const {shouldGridMove,moveX,moveY,shouldZoom, zoomDirection} = nextProps;
     const didMoveGrid = (this.props.moveX == moveX && this.props.moveY == moveY);

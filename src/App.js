@@ -149,7 +149,6 @@ function cleanStr(str){
 
       let filter = web3.eth.filter("latest",function(error, blockHash) {
         if (!error) {
-          console.log('blackhash',blockHash)
           web3.eth.getBlock(blockHash, false, (block)=>{
             if (!block) return
             if (block.length > 0) {
@@ -197,7 +196,6 @@ function cleanStr(str){
       if (typeof web3 !== 'undefined' && web3 != null) {
         console.log('web3 exists')
         if (web3.currentProvider){
-        console.log('found web3 already!')
         window.web3 = new Web3(web3.currentProvider);
         const eth = new Eth(web3.currentProvider)
         const contract = new EthContract(eth);
@@ -249,7 +247,6 @@ function cleanStr(str){
       let TableRows = []
       const {colors, personsA, personsB, msgs1, msgs2, msgs3, msgs4,xPoses,yPoses,xPos,yPos, ids} = this.state;
       const {shouldGridMove, moveX, moveY,shouldZoom, zoomDirection} = this.state;
-      console.log('this.state on render',this.state)
 
       return (
         <div className="App">
