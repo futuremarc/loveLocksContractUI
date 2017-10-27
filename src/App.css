@@ -438,13 +438,6 @@ input:last-child {
 
 }
 
-
-@media (min-width: 60em) {
-  .about-modal{
-
-  }
-}
-
 .modal-overlay{
   background: rgba(0,0,0,0.8);
   bottom: 0;
@@ -588,29 +581,6 @@ input:last-child {
   width   : 50%;
   border-left: 1px rgba(100,100,100,.7) solid;
 }
-#about-btn{
-  border-radius:100%;
-  border: 3px rgba(255,255,255,.7) solid;
-  width:22px;
-  height:22px;
-  line-height: 13px;
-  position: fixed;
-  display:none;
-  user-select: none;
-  top:24px;
-  z-index:9;
-  right:20px;
-  font-size: 14px;
-  font-weight: 500;
-  color:rgba(255,255,255,.6);
-}
-
-#about-btn:hover{
-  cursor: pointer;
-  border: 3px rgba(255,255,255,.8) solid;
-  color:rgba(255,255,255,87);
-}
-
 
 #close-form{
   color:  rgba(255,255,255,.4);
@@ -643,8 +613,6 @@ input:last-child {
 #close-about:hover{
   color:  rgba(0,0,0,.4);
 }
-
-
 
 .pulse1 {
   animation: pulse1 1000ms linear normal infinite;

@@ -65,13 +65,13 @@ class Form extends Component {
 
       window.web3.eth.getGasPrice((err,price)=>{
 
-        miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '220000',gasPrice:price}).then((blockHash,err)=>{
+        const gP = 10000000000; //just use default for now
+
+        miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '220000',gasPrice:gP}).then((blockHash,err)=>{
           console.log(blockHash,err);
-          //btn.val('Engraving...');
           $('#url').html('It may take a minute to mine your block.');
-          btn.attr('disabled',true);
           $('.slider-picker').hide();
-          //btn.addClass('engraving');
+          btn.attr('disabled',true);
           btn.hide()
           $('#engraving').show()
           setTx(blockHash);

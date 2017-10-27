@@ -4,15 +4,14 @@ import Web3 from 'web3';
 import Form from './Form';
 import Canvas from './Canvas';
 import About from './About';
-import SearchBar from './SearchBar'
+import SearchBar from './SearchBar';
+import Eth from 'ethjs-query';
+import EthContract from 'ethjs-contract';
 
-const Eth = require('ethjs-query');
-const EthContract = require('ethjs-contract');
 const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"},{"name":"id","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"},{"name":"","type":"address[]"}],"payable":false,"type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"id","type":"address"}],"name":"txRecieved","type":"event"}]
-const address = '0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A'; //0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A  0x8b57723c23BAdd2878530a06a98548072B1EE516 rinke
+const address = '0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A'; //0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A  0x8b57723c23BAdd2878530a06a98548072B1EE516 rinkeby
 let MiniToken, miniToken;
 let web3 = window.web3 || null;
-let didRetry = false;
 
 
 function cleanStr(str){
@@ -71,8 +70,8 @@ function cleanStr(str){
     }
 
     getLocks(){
-      let getMain = new Promise((resolve, reject)=>{
 
+      let getMain = new Promise((resolve, reject)=>{
         miniToken.getLoveLocks().then((data)=>{
           let colors = String(data[0]).split(',');
           let personsA = String(data[1]).split(',');
@@ -94,7 +93,7 @@ function cleanStr(str){
           let locks = {colors,personsA,personsB, xPoses, yPoses,ids}
           resolve(locks);
 
-        });
+        })
       })
 
       let getMsgs = new Promise((resolve, reject)=>{
@@ -120,7 +119,7 @@ function cleanStr(str){
 
           let msgs = {msgs1,msgs2,msgs3,msgs4};
           resolve(msgs);
-        });
+        })
       });
 
       Promise.all([getMain, getMsgs]).then(vals => {
@@ -145,18 +144,17 @@ function cleanStr(str){
 
       MiniToken = contract(abi);
       miniToken = MiniToken.at(address);
+
       const {txHash} = this.state;
 
       let filter = web3.eth.filter("latest",function(error, blockHash) {
         if (!error) {
-          console.log('filter!',blockHash)
+           console.log('filter', blockHash);
         }else{
           console.log('error',error)
         }
         this.getLocks();
-
       }.bind(this));
-
       this.getLocks();
     }
 
@@ -177,25 +175,20 @@ function cleanStr(str){
 
     connectWeb3(){
       if (typeof web3 !== 'undefined' && web3 != null) {
-        console.log('web3 exists')
-        if (web3.currentProvider){
+        console.log('web3 found');
         window.web3 = new Web3(web3.currentProvider);
-        const eth = new Eth(web3.currentProvider)
-        const contract = new EthContract(eth);
-        this.initContract(contract);
-      }
-    } else if (!didRetry){
-      console.log('retry web3')
-      setTimeout(this.connectWeb3,100);
-      didRetry = true;
-    } else{
+
+      }else{
         console.log('no web3 found')
         web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/"));
-        const eth = new Eth(web3.currentProvider);
-        const contract = new EthContract(eth);
         window.web3 = web3;
-        this.initContract(contract);
       }
+
+      let eth = new Eth(web3.currentProvider)
+      let contract = new EthContract(eth);
+
+      this.initContract(contract);
+
     }
 
     componentWillMount() {
@@ -234,7 +227,7 @@ function cleanStr(str){
       return (
         <div className="App">
           { this.state.isCanvasReady ? <Canvas moveX={moveX} shouldZoom={shouldZoom} zoomDirection={zoomDirection} moveY={moveY} colors={colors} ids={ids} personsA={personsA} personsB={personsB} msgs1={msgs1} msgs2={msgs2} msgs3={msgs3} msgs4={msgs4} xPoses={xPoses} yPoses= {yPoses} shouldGridMove={shouldGridMove} openForm={this.openForm} /> : null }
-          { this.state.isFormActive ? <Form moveGrid={this.moveGrid} xPoses={xPoses} yPoses={yPoses} setTx={this.setTx} miniToken={miniToken} web3={web3} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
+          { this.state.isFormActive ? <Form moveGrid={this.moveGrid} xPoses={xPoses} yPoses={yPoses} setTx={this.setTx} miniToken={miniToken} xPos={xPos} yPos={yPos} closeForm={this.closeForm} /> : null }
           { this.state.isAboutActive ? <About closeAbout={this.closeAbout} /> : null }
           <div onMouseDown={this.openAbout} id="header"><img src="/logo-white.png"></img></div>
 
@@ -243,7 +236,6 @@ function cleanStr(str){
             <div onMouseDown={this.zoom}className="zoom" id="zoom-in">+</div>
             <div onMouseDown={this.zoom}className="zoom" id="zoom-out">—</div>
           </div>
-          <div id="about-btn">ℹ</div>
 
         </div>
       );
