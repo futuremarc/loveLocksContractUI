@@ -67,11 +67,13 @@ class Form extends Component {
 
         miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '220000',gasPrice:price}).then((blockHash,err)=>{
           console.log(blockHash,err);
-          btn.val('Engraving...');
+          //btn.val('Engraving...');
           $('#url').html('It may take a minute to mine your block.');
           btn.attr('disabled',true);
           $('.slider-picker').hide();
-          btn.addClass('engraving');
+          //btn.addClass('engraving');
+          btn.hide()
+          $('#engraving').show()
           setTx(blockHash);
           this.setState({
             xPos:xPos,
@@ -100,7 +102,7 @@ class Form extends Component {
 
       if (xPoses[index] == xPos && yPoses[index] == yPos){
 
-        btn.val('Congrats! 🎉');
+        $('#engraving').html('Congrats! 🎉');
         $('#url').html(`Share your lock: <a target="_blank" href="http://cryptolovelocks.co/${window.web3.eth.accounts[0]}">http://cryptolovelocks.co/${window.web3.eth.accounts[0]}</a>`);
         $('.lock-bar')[0].className += ' animate-lock';
 
@@ -162,7 +164,7 @@ class Form extends Component {
                 <div className="lock-bar">
                 </div>
                 <ColorPicker onColorPick={ this.onColorPick }/>
-                <div className="btn-container"><input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/></div>
+                <div className="btn-container"><input type="submit" onClick={this.onSubmit} id="submit-form" value="Engrave"/><div id="engraving">Engraving<span className="pulse3">.</span><span className="pulse2">.</span><span className="pulse1">.</span></div></div>
                 <div id="url"></div>
                 <div id="receipt"></div>
               </div>

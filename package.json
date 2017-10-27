@@ -9,9 +9,9 @@
     "lodash": "^4.17.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.10",
-    "page": "1.7.1",
-    "web3": "0.20.1"
+    "react-scripts": "^1.0.10",
+    "page": "^1.7.1",
+    "web3": "^0.20.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "react-minimalist-portal": "^2.1.1",
-    "react-color": "2.13.8"
+    "react-color": "^2.13.8"
   }
 }

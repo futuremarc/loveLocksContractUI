@@ -149,24 +149,7 @@ function cleanStr(str){
 
       let filter = web3.eth.filter("latest",function(error, blockHash) {
         if (!error) {
-          web3.eth.getBlock(blockHash, false, (block)=>{
-            if (!block) return
-            if (block.length > 0) {
-              console.log("found " + block.length + " transactions in block " + blockHash);
-              console.log(JSON.stringify(block));
-
-              if (!txHash) return
-
-              block.forEach((item,index)=>{
-                console.log(item,txHash)
-                if (item === txHash) console.log('MATCH!')
-                else console.log('NO MATCH');
-              });
-            } else {
-                console.log("no transaction in block: " + blockHash);
-              }
-
-          });
+          console.log('filter!',blockHash)
         }else{
           console.log('error',error)
         }

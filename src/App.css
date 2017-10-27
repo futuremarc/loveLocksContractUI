@@ -573,6 +573,8 @@ input:last-child {
   box-shadow: 1px 1px 10px  rgba(70,70,70,.25);
 
 }
+
+
 #zoom-out{
   font-size: 22px;
   padding-top:7px;
@@ -694,6 +696,17 @@ input:last-child {
   animation: pulse3 1000ms linear normal infinite;
 }
 
+#engraving{
+  width:100%;
+  height:100%;
+  text-align: center;
+  color:#fff;
+  padding:18px;
+  font-size:18px;
+  text-shadow: 1px 1px 0px rgba(0,0,0,.1);
+  display:none;
+
+}
 
 @keyframes pulse3 {
   from {

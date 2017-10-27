@@ -448,6 +448,7 @@ class Canvas extends Component {
           }
           else if (zoomDirection == 'zoom-in'){
             gScale += .75;
+            //ctx.setTransform(gScale,0,0,gScale, -(gScale - 1) * canvas.width/2, (-gScale - 1) * canvas.height/2);
             // gX = gX + (gridSize * gScale) - canvas.width/2;
             // gY = gY + (gridSize * gScale) - canvas.height/2;
           }
