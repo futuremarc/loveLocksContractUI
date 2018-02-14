@@ -67,7 +67,7 @@ class Form extends Component {
 
         const gP = 10000000000; //just use default for now
 
-        miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '220000',gasPrice:gP}).then((blockHash,err)=>{
+        miniToken.addLoveLock(color,personA,personB,m1,m2,m3,m4,xPos,yPos,{ from: window.web3.eth.accounts[0] , gas: '320000',gasPrice:gP}).then((blockHash,err)=>{
           console.log(blockHash,err);
           $('#url').html('It may take a minute to mine your block.');
           $('.slider-picker').hide();

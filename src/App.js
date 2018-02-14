@@ -6,12 +6,39 @@ import Canvas from './Canvas';
 import About from './About';
 import SearchBar from './SearchBar';
 import Eth from 'ethjs-query';
+import HttpProvider from 'ethjs-provider-http';
 import EthContract from 'ethjs-contract';
+import EthFilters from 'ethjs-filter';
+
+const eth = new Eth(new HttpProvider('http://localhost:3001'));
+const contr = new EthContract(eth);
+
+let filters
+
 
 const abi = [{"constant":true,"inputs":[],"name":"getLoveLockMsgs","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lovelocks","outputs":[{"name":"color","type":"bytes8"},{"name":"personA","type":"bytes32"},{"name":"personB","type":"bytes32"},{"name":"message1","type":"bytes32"},{"name":"message2","type":"bytes32"},{"name":"message3","type":"bytes32"},{"name":"message4","type":"bytes32"},{"name":"xPos","type":"uint8"},{"name":"yPos","type":"uint8"},{"name":"id","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_color","type":"bytes8"},{"name":"_personA","type":"bytes32"},{"name":"_personB","type":"bytes32"},{"name":"_message1","type":"bytes32"},{"name":"_message2","type":"bytes32"},{"name":"_message3","type":"bytes32"},{"name":"_message4","type":"bytes32"},{"name":"_xPos","type":"uint8"},{"name":"_yPos","type":"uint8"}],"name":"addLoveLock","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getLoveLocks","outputs":[{"name":"","type":"bytes8[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint8[]"},{"name":"","type":"uint8[]"},{"name":"","type":"address[]"}],"payable":false,"type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"id","type":"address"}],"name":"txRecieved","type":"event"}]
-const address = '0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A'; //0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A  0x8b57723c23BAdd2878530a06a98548072B1EE516 rinkeby
+const address = '0x0076cf9a326618890c5938cf1e08744c6d520228';  //real 0x0076cf9a326618890c5938cf1e08744c6d520228 //0x8aeC8d5E958896863F2d84012b0Ff99b3Ac2a45A  0x8b57723c23BAdd2878530a06a98548072B1EE516 rinkeby
 let MiniToken, miniToken;
 let web3 = window.web3 || null;
+
+
+// const getContract = (web3) => {
+//   let contract = TruffleContract(TokenArtifact);
+//   contract.setProvider(web3.currentProvider);
+//
+//   /*truffle-contract bug, issue #57 work around*/
+//   if (typeof contract.currentProvider.sendAsync !== "function") {
+//     contract.currentProvider.sendAsync = function() {
+//       return contract.currentProvider.send.apply(
+//         contract.currentProvider, arguments
+//       );
+//     };
+//   }
+//   /*truffle-contract work around end*/
+//
+//   if (!window.navigator.onLine) return false /*for dev: if offline dont construct contract it will hang*/
+//   return contract.deployed().then(instance => instance).catch(error => error);
+// };
 
 
 function cleanStr(str){
@@ -142,20 +169,82 @@ function cleanStr(str){
 
     initContract (contract) {
 
-      MiniToken = contract(abi);
-      miniToken = MiniToken.at(address);
-
       const {txHash} = this.state;
 
-      let filter = web3.eth.filter("latest",function(error, blockHash) {
+
+      MiniToken = contract(abi);
+      miniToken = MiniToken.at(address);
+      //
+      // miniToken = MiniToken.new((error, result) => {
+      //   console.log('MINITOKKK', error, result)
+      //
+      //
+      // //   // miniToken.set(45000, (error, result) => {
+      // //   //   // result null '0x2dfj24...'
+      // //   //   console.log('MINITOKKK111', error, result)
+      // //   //
+      // //   // });
+      // //
+      // //   // miniToken.get().catch((error) => {
+      // //   //   // error null
+      // //   //
+      // //   //   console.log('MINITOKKK err', error)
+      // //   //
+      // //   // }).then(result) => {
+      // //   //
+      // //   //   console.log('MINITOKKK222', result)
+      // //   //
+      // //   //   // result <BigNumber ...>
+      // //   // });
+      // //
+      // //
+      //
+      // });
+
+
+      console.log('MINI', miniToken)
+      //
+      //
+      // const filter = miniToken.SetComplete()
+      // .new({ toBlock: 'latest' }, (error, result) => {
+      //   console.log('NEW', error, result)
+      //   // result null <BigNumber ...> filterId
+      // });
+      // filter.watch((err, result) => {
+      //   console.log('watch', err, result)
+      //
+      //   // result null FilterResult {...}
+      // });
+
+      // if (typeof web3.currentProvider.sendAsync !== "function") {
+        // web3.currentProvider.sendAsync = function() {
+        //   return web3.currentProvider.send.apply(
+        //     web3.currentProvider, arguments
+        //   );
+        // };
+      // }
+
+
+      let filter = web3.eth.filter("latest", (error, blockHash) => {
         if (!error) {
            console.log('filter', blockHash);
         }else{
           console.log('error',error)
         }
         this.getLocks();
-      }.bind(this));
+      });
       this.getLocks();
+      //
+      // const fil = new filters.Filter({fromBlock:0, toBlock: 'latest'})
+      // .new({ toBlock: 500 })
+      // .then((result) => {
+      //   console.log('filter reseult', result)
+      //   // result <BigNumber ...> filterId
+      // })
+      // .catch((error) => {
+      //   console.log('filter error', error)
+      //   // result null
+      // })
     }
 
     moveGrid(x,y){
@@ -177,11 +266,13 @@ function cleanStr(str){
       if (typeof web3 !== 'undefined' && web3 != null) {
         console.log('web3 found');
         window.web3 = new Web3(web3.currentProvider);
+        filters = new EthFilters(web3)
 
       }else{
         console.log('no web3 found')
-        web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/"));
+        web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/6w3ANt3NTR7YdDAmqhdR"));
         window.web3 = web3;
+        filters = new EthFilters(web3)
       }
 
       let eth = new Eth(web3.currentProvider)

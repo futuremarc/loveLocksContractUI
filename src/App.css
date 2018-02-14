@@ -149,7 +149,7 @@ form{
   position: absolute;
   transition: top 1s;
   border-radius: 7%;
-  box-shadow: 3px 3px 10px 3px rgba(0,0,0,.3);
+  box-shadow: 3px 3px 10px 1px rgba(0,0,0,.3);
 }
 
 .animate-lock{
@@ -419,7 +419,7 @@ input:last-child {
   -webkit-overflow-scrolling: touch;
   height: 100%;*/
   margin: 7% auto;
-  height: 600px;
+  height: 550px;
   width:750px;
   padding: 45px;
 }

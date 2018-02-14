@@ -4,23 +4,29 @@
   "private": true,
   "dependencies": {
     "ethjs-contract": "^0.1.9",
+    "ethjs-filter": "^0.1.5",
+    "ethjs-provider-http": "^0.1.6",
     "ethjs-query": "^0.2.9",
+    "gh-pages": "^1.1.0",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
+    "page": "^1.7.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-scripts": "^1.0.10",
-    "page": "^1.7.1",
+    "truffle-contract": "^3.0.3",
     "web3": "^0.20.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
-    "react-minimalist-portal": "^2.1.1",
-    "react-color": "^2.13.8"
+    "react-color": "^2.13.8",
+    "react-minimalist-portal": "^2.1.1"
   }
 }
